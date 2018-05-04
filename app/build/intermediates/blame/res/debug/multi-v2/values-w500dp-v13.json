@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/Erik/Desktop/vuforia-sdk-android-7-1-34/samples/Schedular copy/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-w500dp-v13/values-w500dp-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/Erik/.gradle/caches/transforms-1/files-1.1/appcompat-v7-22.2.1.aar/c10d6fcd174c2c7af23c37c6f9a79a66/res/values-w500dp/values-w500dp.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "4",
+                        "startOffsets": "294",
+                        "endColumns": "54",
+                        "endOffsets": "344"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "54",
+                        "endOffsets": "105"
+                    }
+                }
+            ]
+        }
+    ]
+}
