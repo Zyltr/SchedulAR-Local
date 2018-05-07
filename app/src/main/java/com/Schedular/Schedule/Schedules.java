@@ -7,17 +7,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.constraint.ConstraintLayout;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -25,7 +22,6 @@ import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,8 +40,6 @@ import com.vuforia.DataSet;
 import com.vuforia.ObjectTracker;
 import com.vuforia.STORAGE_TYPE;
 import com.vuforia.State;
-import com.vuforia.TargetFinder;
-import com.vuforia.TargetSearchResult;
 import com.vuforia.Trackable;
 import com.vuforia.TrackableResult;
 import com.vuforia.Tracker;
@@ -58,133 +52,72 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class Schedules extends Activity implements SampleApplicationControl
 {
-    // These codes match the ones defined in TargetFinder in Vuforia.jar
-    static final int UPDATE_ERROR_AUTHORIZATION_FAILED = -1;
-    static final int UPDATE_ERROR_PROJECT_SUSPENDED = -2;
-    static final int UPDATE_ERROR_NO_NETWORK_CONNECTION = -3;
-    static final int UPDATE_ERROR_SERVICE_NOT_AVAILABLE = -4;
-    static final int UPDATE_ERROR_BAD_FRAME_QUALITY = -5;
-    static final int UPDATE_ERROR_UPDATE_SDK = -6;
-    static final int UPDATE_ERROR_TIMESTAMP_OUT_OF_RANGE = -7;
-    static final int UPDATE_ERROR_REQUEST_TIMEOUT = -8;
-
-    // Handles Codes to display/Hide views
-    static final int HIDE_STATUS_BAR = 0;
-    static final int SHOW_STATUS_BAR = 1;
-    static final int HIDE_2D_OVERLAY = 0;
-    static final int SHOW_2D_OVERLAY = 1;
-    static final int HIDE_LOADING_DIALOG = 0;
-    static final int SHOW_LOADING_DIALOG = 1;
-    private static final String LOGTAG = "Schedules";
-
-    // Stores the current status of the target ( if is being displayed or not )
-    private static final int SCHEDULEINFO_NOT_DISPLAYED = 0;
-    private static final int SCHEDULEINFO_IS_DISPLAYED = 1;
-
-    // size of the Texture to be generated with the book data
-    private static int mTextureSize = 768;
-    SampleApplicationSession vuforiaAppSession;
-
-    // Augmented content status
-    private int mScheduleInfoStatus = SCHEDULEINFO_NOT_DISPLAYED;
-
-    // Status Bar Text
-    private String mStatusBarText;
-
-    // Active Book Data
-    private Schedule mScheduleData;
-    private String mScheduleMetadata;
-    private Texture mScheduleDataTexture;
-
-    // Indicates if the app is currently loading the book data
-    private boolean mIsLoadingScheduleData = false;
-
-    // AsyncTask to get book data from a json object
-    private GetScheduleDataTask mGetScheduleDataTask;
-
-    // Our OpenGL view:
-    private SampleApplicationGLView mGlView;
-
-    // Our renderer:
-    private SchedulesRenderer mRenderer;
-
-    // View overlays to be displayed in the Augmented View
-    private ConstraintLayout mUILayout;
-    private TextView mStatusBar;
-    private ImageButton mCloseButton;
-    private ImageButton mNextButton;
-    private ImageButton mPreviousButton;
-    private ImageButton mInformationButton;
-
-    // Error message handling:
-    private int mlastErrorCode = 0;
-    private int mInitErrorCode = 0;
-    private boolean mFinishActivityOnError;
-
-    // Alert Dialog used to display SDK errors
-    private AlertDialog mErrorDialog;
-
-    // Detects the double tap gesture for launching the Camera menu
-    private GestureDetector mGestureDetector;
-    private String lastTargetId = "";
-
-    private Handler statusBarHandler = new StatusBarHandler ( this );
-    private Handler overlay2DHandler = new Overlay2dHandler ( this );
-    private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler ( this );
-    private double mLastErrorTime;
-    private float mdpiScaleIndicator;
-    private Activity mActivity = null;
-
-    // TODO -> EXPERIMENTAL
-    private DatabaseHelper mDBHelper;
-    private SQLiteDatabase mDb;
-    private ArrayList<Row> activeRows;
-    private int activeRowsIndex = 0;
-    private boolean shouldUpdateTexture = false;
-
+    // Activity Keys
     public static final String SectionNumberKey = "com.Schedular.Scheule.SectionNumberKey";
     public static final String InstructorKeys = "com.Schedular.Scheule.InstructorKeys";
     public static final String InstructorValues = "com.Schedular.Scheule.InstructorValues";
     public static final String CourseKeys = "com.Schedular.Scheule.CourseKeys";
     public static final String CourseValues = "com.Schedular.Scheule.CourseValues";
 
-    // TODO -> END EXPERIMENTAL
-    private ArrayList<String> mDatasetStrings = new ArrayList<> ( );
+    // Static Final Variables
+    static final int HIDE_STATUS_BAR = 0;
+    static final int SHOW_STATUS_BAR = 1;
+    static final int HIDE_2D_OVERLAY = 0;
+    static final int SHOW_2D_OVERLAY = 1;
+    static final int HIDE_LOADING_DIALOG = 0;
+    static final int SHOW_LOADING_DIALOG = 1;
+    static final String LOGTAG = "Schedules";
+    private static final int SCHEDULEINFO_NOT_DISPLAYED = 0;
+    private static final int SCHEDULEINFO_IS_DISPLAYED = 1;
+
+    private static int mTextureSize = 768;
+    SampleApplicationSession vuforiaAppSession;
+    String currentTrackableId;
+    Trackable currentTrackable;
+    private int mScheduleInfoStatus = SCHEDULEINFO_NOT_DISPLAYED;
+    private String mStatusBarText;
+    private Schedule mScheduleData;
+    private SampleApplicationGLView mGlView;
+    private SchedulesRenderer mRenderer;
+    private ConstraintLayout mUILayout;
+    private TextView mStatusBar;
+    private ImageButton mCloseButton;
+    private ImageButton mNextButton;
+    private ImageButton mPreviousButton;
+    private ImageButton mInformationButton;
+    private AlertDialog mErrorDialog;
+    private GestureDetector mGestureDetector;
+    private Handler statusBarHandler = new StatusBarHandler ( this );
+    private Handler overlay2DHandler = new Overlay2dHandler ( this );
+    private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler ( this );
+    private float mdpiScaleIndicator;
+    private Activity mActivity = null;
+    private DatabaseHelper mDBHelper;
+    private SQLiteDatabase mDb;
+    private ArrayList<Row> activeRows;
     private DataSet mCurrentDataset;
-    private int mCurrentDatasetSelectionIndex = 0;
-    // TODO -> IGNORE
+    private ArrayList<String> mDatasetStrings = new ArrayList<> ( );
+    private int activeRowsIndex = 0;
+    private boolean shouldUpdateTexture = false;
 
     private void initStateVariables ( )
     {
         mRenderer.setRenderState ( SchedulesRenderer.RS_SCANNING );
         mRenderer.setProductTexture ( null );
-
         mRenderer.setScanningMode ( true );
         mRenderer.isShowing2DOverlay ( false );
         mRenderer.showAnimation3Dto2D ( false );
         mRenderer.stopTransition3Dto2D ( );
         mRenderer.stopTransition2Dto3D ( );
 
-        cleanTargetTrackedId ( );
+        currentTrackableId = "";
+        currentTrackable = null;
     }
 
-    /**
-     * Function to generate the OpenGL Texture Object in the renderFrame thread
-     */
-    // TODO -> IGNORE
-    public void productTextureIsCreated ( )
-    {
-        mRenderer.setRenderState ( SchedulesRenderer.RS_TEXTURE_GENERATED );
-    }
-
-    /**
-     * Sets current device Scale factor based on screen dpi
-     */
-    // TODO -> IGNORE
+    // Sets current device Scale factor based on screen dpi
     public void setDeviceDPIScaleFactor ( float dpiSIndicator )
     {
         mRenderer.setDPIScaleIndicator ( dpiSIndicator );
@@ -211,52 +144,26 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    /**
-     * Cleans the lastTargetTrackerId variable
-     */
-    // TODO -> IGNORE
-    public void cleanTargetTrackedId ( )
-    {
-        synchronized ( lastTargetId )
-        {
-            lastTargetId = "";
-        }
-    }
-
-    // Called when the activity first starts or needs to be recreated after
-    // resuming the application or a configuration change.
-    // TODO -> IGNORE
+    // Called when the activity first starts or needs to be recreated after resuming the application
+    // or a configuration change.
     @Override
     protected void onCreate ( Bundle savedInstanceState )
     {
         Log.d ( LOGTAG, "onCreate" );
         super.onCreate ( savedInstanceState );
 
-        // Initializing Database
         mDBHelper = new DatabaseHelper ( this );
-
         try
         {
             mDBHelper.updateDataBase ( );
         }
         catch ( IOException mIOException )
         {
-            throw new Error ( "UnableToUpdateDatabase" );
+            throw new Error ( "Unable To Update Database" );
         }
-
-        try
-        {
-            mDb = mDBHelper.getWritableDatabase ( );
-        }
-        catch ( SQLException mSQLException )
-        {
-            throw mSQLException;
-        }
-
+        mDb = mDBHelper.getWritableDatabase ( );
         Log.d ( LOGTAG, "Database Name : " + mDBHelper.getDatabaseName ( ) );
-        // End
 
-        // TODO -> EXPERIMENTAL
         mDatasetStrings.add ( "Schedule.xml" );
 
         mActivity = this;
@@ -303,7 +210,6 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     // Called when the activity will start interacting with the user.
-    // TODO -> IGNORE
     @Override
     protected void onResume ( )
     {
@@ -320,7 +226,6 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     // Callback for configuration changes the activity handles itself
-    // TODO -> IGNORE
     @Override
     public void onConfigurationChanged ( Configuration config )
     {
@@ -331,7 +236,6 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     // Called when the system is about to start resuming a previous activity.
-    // TODO -> IGNORE
     @Override
     protected void onPause ( )
     {
@@ -342,23 +246,17 @@ public class Schedules extends Activity implements SampleApplicationControl
         {
             vuforiaAppSession.pauseAR ( );
         }
-        catch ( SampleApplicationException e )
+        catch ( SampleApplicationException exception )
         {
-            Log.e ( LOGTAG, e.getString ( ) );
+            Log.e ( LOGTAG, exception.getString ( ) );
         }
 
-        // When the camera stops it clears the Product Texture ID so next time
-        // textures
-        // Are recreated
         if ( mRenderer != null )
         {
             mRenderer.deleteCurrentProductTexture ( );
-
-            // Initialize all state Variables
             initStateVariables ( );
         }
 
-        // Pauses the OpenGLView
         if ( mGlView != null )
         {
             mGlView.setVisibility ( View.INVISIBLE );
@@ -367,7 +265,6 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     // The final call you receive before your activity is destroyed.
-    // TODO -> IGNORE
     @Override
     protected void onDestroy ( )
     {
@@ -378,12 +275,12 @@ public class Schedules extends Activity implements SampleApplicationControl
         {
             vuforiaAppSession.stopAR ( );
         }
-        catch ( SampleApplicationException e )
+        catch ( SampleApplicationException exception )
         {
-            Log.e ( LOGTAG, e.getString ( ) );
+            Log.e ( LOGTAG, exception.getString ( ) );
         }
 
-        System.gc ( );
+        System.gc();
     }
 
     private void startLoadingAnimation ( )
@@ -396,19 +293,19 @@ public class Schedules extends Activity implements SampleApplicationControl
         mUILayout.setBackgroundColor ( Color.TRANSPARENT );
 
         // By default
-        loadingDialogHandler.mLoadingDialogContainer = mUILayout.findViewById ( R.id.loading );
+        loadingDialogHandler.mLoadingDialogContainer = mUILayout.findViewById ( R.id.cameraLoadingBar );
         loadingDialogHandler.mLoadingDialogContainer.setVisibility ( View.VISIBLE );
 
         addContentView ( mUILayout, new ViewGroup.LayoutParams ( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT ) );
 
         // Gets a Reference to the Bottom Status Bar
-        mStatusBar = ( TextView ) mUILayout.findViewById ( R.id.overlay_status );
+        mStatusBar = ( TextView ) mUILayout.findViewById ( R.id.cameraStatusView );
 
         // Shows the loading indicator at start
         loadingDialogHandler.sendEmptyMessage ( LoadingDialogHandler.SHOW_LOADING_DIALOG );
 
         // Gets a reference to the Close Button
-        mCloseButton = ( ImageButton ) mUILayout.findViewById ( R.id.overlay_close_button );
+        mCloseButton = ( ImageButton ) mUILayout.findViewById ( R.id.cameraCloseButton );
 
         // Sets the Close Button functionality
         mCloseButton.setOnClickListener ( new View.OnClickListener ( )
@@ -420,32 +317,18 @@ public class Schedules extends Activity implements SampleApplicationControl
 
                 loadingDialogHandler.sendEmptyMessage ( HIDE_LOADING_DIALOG );
 
-                // Checks if the app is currently loading a schedule data
-                if ( mIsLoadingScheduleData )
-                {
-
-                    // Cancels the AsyncTask
-                    mGetScheduleDataTask.cancel ( true );
-                    mIsLoadingScheduleData = false;
-
-                    // Cleans the Target Tracker Id
-                    cleanTargetTrackedId ( );
-                }
-
                 // Enters Scanning Mode
                 enterScanningMode ( );
             }
         } );
 
-        final Activity activity = this;
-
-        mInformationButton = ( ImageButton ) findViewById ( R.id.informationImageButton );
+        mInformationButton = ( ImageButton ) findViewById ( R.id.cameraInformationButton );
         mInformationButton.setOnClickListener ( new View.OnClickListener ( )
         {
             @Override
             public void onClick ( View view )
             {
-                Intent informationIntent = new Intent ( activity, DetailedScheduleActivity.class );
+                Intent informationIntent = new Intent ( mActivity, DetailedScheduleActivity.class );
 
                 // Create Information Object that will be passed to the Intent
                 // Need Instructor and Course for the Schedule being viewed. As well as Section #
@@ -497,7 +380,7 @@ public class Schedules extends Activity implements SampleApplicationControl
             }
         } );
 
-        mNextButton = ( ImageButton ) findViewById ( R.id.nextImageButton );
+        mNextButton = ( ImageButton ) findViewById ( R.id.cameraNextButton );
         mNextButton.setOnClickListener ( new View.OnClickListener ( )
         {
             @Override
@@ -512,13 +395,13 @@ public class Schedules extends Activity implements SampleApplicationControl
                     ++activeRowsIndex;
                 }
 
-                Toast.makeText ( activity, "Next", Toast.LENGTH_SHORT ).show ( );
+                Toast.makeText ( mActivity, "Next", Toast.LENGTH_SHORT ).show ( );
                 shouldUpdateTexture = true;
                 updateProductTexture ( );
             }
         } );
 
-        mPreviousButton = ( ImageButton ) findViewById ( R.id.previousImageButton );
+        mPreviousButton = ( ImageButton ) findViewById ( R.id.cameraPreviousButton );
         mPreviousButton.setOnClickListener ( new View.OnClickListener ( )
         {
             @Override
@@ -533,7 +416,7 @@ public class Schedules extends Activity implements SampleApplicationControl
                     activeRowsIndex = activeRows.size ( ) - 1;
                 }
 
-                Toast.makeText ( activity, "Previous", Toast.LENGTH_SHORT ).show ( );
+                Toast.makeText ( mActivity, "Previous", Toast.LENGTH_SHORT ).show ( );
                 shouldUpdateTexture = true;
                 updateProductTexture ( );
             }
@@ -546,10 +429,9 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     // Initializes AR application components.
-    // TODO -> IGNORE
     private void initApplicationAR ( )
     {
-        // Create OpenGL ES view:
+        // Create OpenGL ES view
         int depthSize = 16;
         int stencilSize = 0;
         boolean translucent = Vuforia.requiresAlpha ( );
@@ -569,20 +451,14 @@ public class Schedules extends Activity implements SampleApplicationControl
         initStateVariables ( );
     }
 
-    /**
-     * Sets the Status Bar Text in a UI thread
-     */
-    // TODO -> IGNORE
+    // Sets the Status Bar Text in a UI thread
     public void setStatusBarText ( String statusText )
     {
         mStatusBarText = statusText;
         statusBarHandler.sendEmptyMessage ( SHOW_STATUS_BAR );
     }
 
-    /**
-     * Hides the Status bar 2D Overlay in a UI thread
-     */
-    // TODO -> IGNORE
+    // Hides the Status bar 2D Overlay in a UI thread
     public void hideStatusBar ( )
     {
         if ( mStatusBar.getVisibility ( ) == View.VISIBLE )
@@ -591,10 +467,7 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    /**
-     * Shows the Status Bar 2D Overlay in a UI thread
-     */
-    // TODO -> IGNORE
+    // Shows the Status Bar 2D Overlay in a UI thread
     public void showStatusBar ( )
     {
         if ( mStatusBar.getVisibility ( ) == View.INVISIBLE )
@@ -603,189 +476,12 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    /**
-     * Returns the error message for each error code
-     */
-    // TODO -> IGNORE
-    private String getStatusDescString ( int code )
-    {
-        if ( code == UPDATE_ERROR_AUTHORIZATION_FAILED )
-        {
-            return getString ( R.string.UPDATE_ERROR_AUTHORIZATION_FAILED_DESC );
-        }
-        if ( code == UPDATE_ERROR_PROJECT_SUSPENDED )
-        {
-            return getString ( R.string.UPDATE_ERROR_PROJECT_SUSPENDED_DESC );
-        }
-        if ( code == UPDATE_ERROR_NO_NETWORK_CONNECTION )
-        {
-            return getString ( R.string.UPDATE_ERROR_NO_NETWORK_CONNECTION_DESC );
-        }
-        if ( code == UPDATE_ERROR_SERVICE_NOT_AVAILABLE )
-        {
-            return getString ( R.string.UPDATE_ERROR_SERVICE_NOT_AVAILABLE_DESC );
-        }
-        if ( code == UPDATE_ERROR_UPDATE_SDK )
-        {
-            return getString ( R.string.UPDATE_ERROR_UPDATE_SDK_DESC );
-        }
-        if ( code == UPDATE_ERROR_TIMESTAMP_OUT_OF_RANGE )
-        {
-            return getString ( R.string.UPDATE_ERROR_TIMESTAMP_OUT_OF_RANGE_DESC );
-        }
-        if ( code == UPDATE_ERROR_REQUEST_TIMEOUT )
-        {
-            return getString ( R.string.UPDATE_ERROR_REQUEST_TIMEOUT_DESC );
-        }
-        if ( code == UPDATE_ERROR_BAD_FRAME_QUALITY )
-        {
-            return getString ( R.string.UPDATE_ERROR_BAD_FRAME_QUALITY_DESC );
-        }
-        else
-        {
-            return getString ( R.string.UPDATE_ERROR_UNKNOWN_DESC );
-        }
-    }
-
-    /**
-     * Returns the error message for each error code
-     */
-    // TODO -> IGNORE
-    private String getStatusTitleString ( int code )
-    {
-        if ( code == UPDATE_ERROR_AUTHORIZATION_FAILED )
-        {
-            return getString ( R.string.UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE );
-        }
-        if ( code == UPDATE_ERROR_PROJECT_SUSPENDED )
-        {
-            return getString ( R.string.UPDATE_ERROR_PROJECT_SUSPENDED_TITLE );
-        }
-        if ( code == UPDATE_ERROR_NO_NETWORK_CONNECTION )
-        {
-            return getString ( R.string.UPDATE_ERROR_NO_NETWORK_CONNECTION_TITLE );
-        }
-        if ( code == UPDATE_ERROR_SERVICE_NOT_AVAILABLE )
-        {
-            return getString ( R.string.UPDATE_ERROR_SERVICE_NOT_AVAILABLE_TITLE );
-        }
-        if ( code == UPDATE_ERROR_UPDATE_SDK )
-        {
-            return getString ( R.string.UPDATE_ERROR_UPDATE_SDK_TITLE );
-        }
-        if ( code == UPDATE_ERROR_TIMESTAMP_OUT_OF_RANGE )
-        {
-            return getString ( R.string.UPDATE_ERROR_TIMESTAMP_OUT_OF_RANGE_TITLE );
-        }
-        if ( code == UPDATE_ERROR_REQUEST_TIMEOUT )
-        {
-            return getString ( R.string.UPDATE_ERROR_REQUEST_TIMEOUT_TITLE );
-        }
-        if ( code == UPDATE_ERROR_BAD_FRAME_QUALITY )
-        {
-            return getString ( R.string.UPDATE_ERROR_BAD_FRAME_QUALITY_TITLE );
-        }
-        else
-        {
-            return getString ( R.string.UPDATE_ERROR_UNKNOWN_TITLE );
-        }
-    }
-
-    // Shows error messages as System dialogs
-    // TODO -> IGNORE
-    public void showErrorMessage ( int errorCode, double errorTime, boolean finishActivityOnError )
-    {
-        if ( errorTime < ( mLastErrorTime + 5.0 ) || errorCode == mlastErrorCode )
-        {
-            return;
-        }
-
-        mlastErrorCode = errorCode;
-        mFinishActivityOnError = finishActivityOnError;
-
-        runOnUiThread ( new Runnable ( )
-        {
-            public void run ( )
-            {
-                if ( mErrorDialog != null )
-                {
-                    mErrorDialog.dismiss ( );
-                }
-
-                // Generates an Alert Dialog to show the error message
-                AlertDialog.Builder builder = new AlertDialog.Builder ( Schedules.this );
-                builder.setMessage ( getStatusDescString ( Schedules.this.mlastErrorCode ) );
-                builder.setTitle ( getStatusTitleString ( Schedules.this.mlastErrorCode ) );
-                builder.setCancelable ( false );
-                builder.setIcon ( 0 );
-                builder.setPositiveButton ( getString ( R.string.button_OK ), new DialogInterface.OnClickListener ( )
-                {
-                    public void onClick ( DialogInterface dialog, int id )
-                    {
-                        if ( mFinishActivityOnError )
-                        {
-                            finish ( );
-                        }
-                        else
-                        {
-                            dialog.dismiss ( );
-                        }
-                    }
-                } );
-
-                mErrorDialog = builder.create ( );
-                mErrorDialog.show ( );
-            }
-        } );
-    }
-
-    /**
-     * Generates a texture for the schedule data fetching the schedule info from the
-     * specified schedule URL
-     */
-    // TODO -> IGNORE
-    public void createProductTexture ( String scheduleMetadata )
-    {
-        // gets Schedule Metadata from parameters
-        mScheduleMetadata = scheduleMetadata;
-
-        // Cleans old texture reference if necessary
-        if ( mScheduleDataTexture != null )
-        {
-            mScheduleDataTexture = null;
-
-            System.gc ( );
-        }
-
-        // Searches for the book data in an AsyncTask
-        mGetScheduleDataTask = new GetScheduleDataTask ( );
-        mGetScheduleDataTask.execute ( );
-    }
-
     public void updateProductTexture ( )
     {
-        if ( mScheduleDataTexture != null )
-        {
-            mScheduleDataTexture = null;
-            System.gc ( );
-        }
-
-        mGetScheduleDataTask = new GetScheduleDataTask ( );
-        mGetScheduleDataTask.execute ( );
+        createProductTexture ( currentTrackable );
     }
 
-    /**
-     * Returns the current Schedule Data Texture
-     */
-    // TODO -> IGNORE
-    public Texture getProductTexture ( )
-    {
-        return mScheduleDataTexture;
-    }
-
-    /**
-     * Updates a ScheduleOverlayView with the Schedule data specified in parameters
-     */
+    // Updates a ScheduleOverlayView with the Schedule data specified in parameters
     private void updateProductView ( ScheduleOverlayView productView, Schedule schedule )
     {
         productView.setTarget ( schedule.getTarget ( ) );
@@ -794,11 +490,6 @@ public class Schedules extends Activity implements SampleApplicationControl
         productView.setProfessor ( schedule.getInstructor ( ) );
     }
 
-    /**
-     * Starts application content Mode Displays UI Overlays and turns Cloud
-     * Recognition off
-     */
-    // TODO -> IGNORE
     public void enterContentMode ( )
     {
         // Updates state variables
@@ -807,46 +498,15 @@ public class Schedules extends Activity implements SampleApplicationControl
         // Shows the 2D Overlay
         show2DOverlay ( );
 
-        // Enters content mode to disable Cloud Recognition
-        TrackerManager trackerManager = TrackerManager.getInstance ( );
-        ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
-
-        // TODO -> EXPERIMENTAL
-        objectTracker.stop ( );
-
-//
-//        TargetFinder targetFinder = objectTracker.getTargetFinder ( );
-//
-//        // Stop Cloud Recognition
-//        targetFinder.stop ( );
-
-        // Remember we are in content mode:
+        // Remember we are in content mode
         mRenderer.setScanningMode ( false );
     }
 
-    /**
-     * Hides the 2D Overlay view and starts C service again
-     */
-    // TODO -> IGNORE
+    // Hides the 2D overlay view
     private void enterScanningMode ( )
     {
         // Hides the 2D Overlay
         hide2DOverlay ( );
-
-        // Enables Cloud Recognition Scanning Mode
-        TrackerManager trackerManager = TrackerManager.getInstance ( );
-        ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
-
-        // TODO -> EXPERIMENTAL
-        objectTracker.start ( );
-
-//        TargetFinder targetFinder = objectTracker.getTargetFinder ( );
-//
-//        // Start Cloud Recognition
-//        targetFinder.startRecognition ( );
-//
-//        // Clear all trackables created previously:
-//        targetFinder.clearTrackables ( );
 
         mRenderer.setScanningMode ( true );
 
@@ -856,27 +516,20 @@ public class Schedules extends Activity implements SampleApplicationControl
         mRenderer.setRenderState ( SchedulesRenderer.RS_SCANNING );
     }
 
-    /**
-     * Displays the 2D Book Overlay
-     */
-    // TODO -> IGNORE
+    // Displays the 2D Schedule Overlay
     public void show2DOverlay ( )
     {
         // Sends the Message to the Handler in the UI thread
         overlay2DHandler.sendEmptyMessage ( SHOW_2D_OVERLAY );
     }
 
-    /**
-     * Hides the 2D Book Overlay
-     */
-    // TODO -> IGNORE
+    // Hides the 2D Book Overlay
     public void hide2DOverlay ( )
     {
         // Sends the Message to the Handler in the UI thread
         overlay2DHandler.sendEmptyMessage ( HIDE_2D_OVERLAY );
     }
 
-    // TODO -> IGNORE
     public boolean onTouchEvent ( MotionEvent event )
     {
         // Process the Gestures
@@ -884,14 +537,13 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     @Override
-    // TODO -> IGNORE
     public boolean doLoadTrackersData ( )
     {
         Log.d ( LOGTAG, "initSchedules" );
 
-        // TODO -> Load Vuforia Database Here
         TrackerManager trackerManager = TrackerManager.getInstance ( );
         ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
+
         if ( objectTracker == null )
         {
             return false;
@@ -907,7 +559,7 @@ public class Schedules extends Activity implements SampleApplicationControl
             return false;
         }
 
-        if ( !mCurrentDataset.load ( mDatasetStrings.get ( mCurrentDatasetSelectionIndex ), STORAGE_TYPE.STORAGE_APPRESOURCE ) )
+        if ( !mCurrentDataset.load ( mDatasetStrings.get ( 0 ), STORAGE_TYPE.STORAGE_APPRESOURCE ) )
         {
             return false;
         }
@@ -921,24 +573,20 @@ public class Schedules extends Activity implements SampleApplicationControl
         for ( int count = 0; count < numTrackables; count++ )
         {
             Trackable trackable = mCurrentDataset.getTrackable ( count );
-
-            String name = "Current Dataset : " + trackable.getName ( );
-            trackable.setUserData ( name );
-            Log.d ( LOGTAG, "UserData:Set the following user data " + trackable.getUserData ( ) );
+            Log.d ( LOGTAG, "Added : " + trackable.getName ( ) );
         }
 
         return true;
     }
 
-    // TODO -> IGNORE
     @Override
     public boolean doUnloadTrackersData ( )
     {
-        // TODO -> EXPERIMENTAL
         boolean result = true;
 
         TrackerManager trackerManager = TrackerManager.getInstance ( );
         ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
+
         if ( objectTracker == null )
         {
             return false;
@@ -961,7 +609,6 @@ public class Schedules extends Activity implements SampleApplicationControl
         return result;
     }
 
-    // TODO -> IGNORE
     @Override
     public void onInitARDone ( SampleApplicationException exception )
     {
@@ -970,13 +617,11 @@ public class Schedules extends Activity implements SampleApplicationControl
         {
             initApplicationAR ( );
 
-            // Now add the GL surface view. It is important
-            // that the OpenGL ES surface view gets added
-            // BEFORE the camera is started and video
-            // background is configured.
+            // Now add the GL surface view. It is important that the OpenGL ES surface view gets added
+            // BEFORE the camera is started and video background is configured
             addContentView ( mGlView, new ViewGroup.LayoutParams ( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT ) );
 
-            // Start the camera:
+            // Start the camera
             vuforiaAppSession.startAR ( CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT );
 
             mRenderer.setActive ( true );
@@ -992,18 +637,10 @@ public class Schedules extends Activity implements SampleApplicationControl
         else
         {
             Log.e ( LOGTAG, exception.getString ( ) );
-            if ( mInitErrorCode != 0 )
-            {
-                showErrorMessage ( mInitErrorCode, 10, true );
-            }
-            else
-            {
-                showInitializationErrorMessage ( exception.getString ( ) );
-            }
+            showInitializationErrorMessage ( exception.getString ( ) );
         }
     }
 
-    // TODO -> IGNORE
     @Override
     public void onVuforiaResumed ( )
     {
@@ -1014,7 +651,6 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    // TODO -> IGNORE
     @Override
     public void onVuforiaStarted ( )
     {
@@ -1033,7 +669,6 @@ public class Schedules extends Activity implements SampleApplicationControl
         showProgressIndicator ( false );
     }
 
-    // TODO -> IGNORE
     public void showProgressIndicator ( boolean show )
     {
         if ( loadingDialogHandler != null )
@@ -1050,7 +685,6 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     // Shows initialization error messages as System dialogs
-    // TODO -> IGNORE
     public void showInitializationErrorMessage ( String message )
     {
         final String errorMessage = message;
@@ -1083,14 +717,12 @@ public class Schedules extends Activity implements SampleApplicationControl
         } );
     }
 
-    // TODO -> EXPERIMENTAL
-    int currentTrackableId = 0;
-    Trackable currentTrackable;
-    private String stringForStatus (int status)
+    private String stringForStatus ( int status )
     {
-        switch (status)
+        switch ( status )
         {
-            case TrackableResult.STATUS.DETECTED: {
+            case TrackableResult.STATUS.DETECTED:
+            {
                 return "DETECTED";
             }
             case TrackableResult.STATUS.EXTENDED_TRACKED:
@@ -1115,9 +747,9 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    private String stringForStatusInfo (int statusInfo)
+    private String stringForStatusInfo ( int statusInfo )
     {
-        switch (statusInfo)
+        switch ( statusInfo )
         {
             case TrackableResult.STATUS_INFO.EXCESSIVE_MOTION:
             {
@@ -1143,194 +775,205 @@ public class Schedules extends Activity implements SampleApplicationControl
                 return "DEFAULT";
         }
     }
-    // TODO -> END EXPERIMENTAL
 
-    // TODO -> NEEDS FIXING
+    private void createProductTexture ( Trackable trackable )
+    {
+        loadingDialogHandler.sendEmptyMessage ( SHOW_LOADING_DIALOG );
+
+        try
+        {
+            mScheduleData = new Schedule ( );
+
+            if ( !shouldUpdateTexture )
+            {
+                String[] buildingAndRoom = trackable.getName ().split ( "-" );
+                if ( buildingAndRoom.length != 2 )
+                    return;
+
+                String building = buildingAndRoom[0];
+                String room = buildingAndRoom[1];
+
+                Cursor queryResults = mDb.rawQuery ( "SELECT * FROM Schedule WHERE Building = " + building + " AND Room = " + room, null );
+
+                activeRows = new Rows ( queryResults ).getRows ( );
+
+                String[] columnNames = queryResults.getColumnNames ( );
+                Log.d ( LOGTAG, "Column Names : " + Arrays.toString ( columnNames ) );
+            }
+
+            if ( activeRows.size ( ) > 0 )
+            {
+                mScheduleData.fillUsingRow ( activeRows.get ( activeRowsIndex ) );
+
+                // Generates a View to display the schedule data
+                ScheduleOverlayView productView = new ScheduleOverlayView ( Schedules.this );
+
+                // Updates the view used as a 3d Texture
+                updateProductView ( productView, mScheduleData );
+
+                // Sets the layout params
+                productView.setLayoutParams ( new ViewGroup.LayoutParams ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT ) );
+
+                // Sets View measure - This size should be the same as the
+                // texture generated to display the overlay in order for the
+                // texture to be centered in screen
+                productView.measure ( View.MeasureSpec.makeMeasureSpec ( mTextureSize, View.MeasureSpec.EXACTLY ), View.MeasureSpec.makeMeasureSpec ( mTextureSize, View.MeasureSpec.EXACTLY ) );
+
+                // updates layout size
+                productView.layout ( 0, 0, productView.getMeasuredWidth ( ), productView.getMeasuredHeight ( ) );
+
+                // Draws the View into a Bitmap. Note we are allocating several
+                // large memory buffers thus attempt to clear them as soon as
+                // they are no longer required:
+                Bitmap bitmap = Bitmap.createBitmap ( mTextureSize, mTextureSize, Bitmap.Config.ARGB_8888 );
+
+                Canvas c = new Canvas ( bitmap );
+                productView.draw ( c );
+                System.gc ();
+
+                // Allocate int buffer for pixel conversion and copy pixels
+                int width = bitmap.getWidth ( );
+                int height = bitmap.getHeight ( );
+
+                int[] data = new int[bitmap.getWidth ( ) * bitmap.getHeight ( )];
+                bitmap.getPixels ( data, 0, bitmap.getWidth ( ), 0, 0, bitmap.getWidth ( ), bitmap.getHeight ( ) );
+                bitmap.recycle ();
+                System.gc ();
+
+                // Generates the Texture from the int buffer
+                mRenderer.setProductTexture ( Texture.loadTextureFromIntBuffer ( data, width, height ) );
+
+                // Hides the loading dialog from a UI thread
+                loadingDialogHandler.sendEmptyMessage ( HIDE_LOADING_DIALOG );
+
+                mRenderer.setRenderState ( SchedulesRenderer.RS_TEXTURE_GENERATED );
+
+                if ( shouldUpdateTexture )
+                {
+                    shouldUpdateTexture = false;
+                }
+            }
+        }
+        catch ( Exception exception )
+        {
+            Log.d ( LOGTAG, "Couldn't get schedule : " + exception );
+        }
+    }
+
     @Override
     public void onVuforiaUpdate ( State state )
     {
-        int numberOfTrackableResults = state.getNumTrackableResults();
-        for (int index = 0; index < numberOfTrackableResults; ++index)
+        int numberOfTrackableResults = state.getNumTrackableResults ( );
+        for ( int index = 0; index < numberOfTrackableResults; ++index )
         {
-            TrackableResult result = state.getTrackableResult(index);
-            Trackable trackable = result.getTrackable();
-
-            if ( currentTrackableId != trackable.getId() )
-            {
-                currentTrackable = trackable;
-                currentTrackableId = trackable.getId();
-                Log.d(LOGTAG, "Initialize Tracker's Texture Here");
-            }
-
-            String status = stringForStatus(result.getStatus());
-            String statusInfo = stringForStatusInfo(result.getStatusInfo());
-            Log.d(LOGTAG, "Status : " + status + " | Status Info : " + statusInfo);
-        }
-
-        // Get the tracker manager:
-        TrackerManager trackerManager = TrackerManager.getInstance ( );
-
-        // Get the object tracker:
-        ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
-
-        if ( state.getNumTrackableResults ( ) > 0 )
-        {
-            TrackableResult result = state.getTrackableResult ( 0 );
+            TrackableResult result = state.getTrackableResult ( index );
             Trackable trackable = result.getTrackable ( );
 
-            if ( !trackable.getName ( ).equals ( lastTargetId ) )
+            String status = stringForStatus ( result.getStatus ( ) );
+            String statusInfo = stringForStatusInfo ( result.getStatusInfo ( ) );
+
+            Log.d ( LOGTAG, "Trackable NAME : " + trackable.getName () );
+            Log.d ( LOGTAG, "Status : " + status + " | Status Info : " + statusInfo );
+
+            if ( !currentTrackableId.equals ( trackable.getName () ) )
             {
-                // If the target has changed then regenerate the
-                // texture
-                // Cleaning this value indicates that the product
-                // Texture needs to be generated
-                // again in Java with the new Schedule data for the new
-                // target
+                currentTrackable = trackable;
+                currentTrackableId = trackable.getName ( );
+                Log.d ( LOGTAG, "Initialize Tracker's Texture Here" );
+
                 mRenderer.deleteCurrentProductTexture ( );
-
-                // Starts the loading state for the product
                 mRenderer.setRenderState ( SchedulesRenderer.RS_LOADING );
-
-                // Calls the Java method with the current product
-                // texture
-                String jsonString = "{\n\"Building\" : \"8\",\n\"Room\" : \"348\"\n}";
-                createProductTexture ( jsonString );
+                createProductTexture ( currentTrackable );
             }
             else
             {
+                Log.d ( LOGTAG, "Rendering is Normal" );
                 mRenderer.setRenderState ( SchedulesRenderer.RS_NORMAL );
             }
 
             mRenderer.setFramesToSkipBeforeRenderingTransition ( 10 );
-            // Initialize the frames to skip variable, used for
-            // waiting
-            // a few frames for getting the chance to tracking
-            // before
-            // starting the transition to 2D when there is no target
-            // Initialize state variables
             mRenderer.showAnimation3Dto2D ( true );
             mRenderer.resetTrackingStarted ( );
-
-            // Updates the value of the current Target Id with the
-            // new target found
-            synchronized ( lastTargetId )
-            {
-                lastTargetId = trackable.getName ( );
-            }
-
             enterContentMode ( );
         }
     }
 
-    // TODO -> IGNORE
     @Override
     public boolean doInitTrackers ( )
     {
         TrackerManager trackerManager = TrackerManager.getInstance ( );
-        Tracker tracker;
+        Tracker tracker = trackerManager.initTracker ( ObjectTracker.getClassType ( ) );
 
-        // Indicate if the trackers were initialized correctly
-        boolean result = true;
-
-        tracker = trackerManager.initTracker ( ObjectTracker.getClassType ( ) );
         if ( tracker == null )
         {
             Log.e ( LOGTAG, "Tracker not initialized. Tracker already initialized or the camera is already started" );
-            result = false;
+            return false;
         }
         else
         {
             Log.i ( LOGTAG, "Tracker successfully initialized" );
         }
 
-        return result;
+        return true;
     }
 
-    // TODO -> IGNORE
     @Override
     public boolean doStartTrackers ( )
     {
-        // Indicate if the trackers were started correctly
-        boolean result = true;
-
-        // Start the tracker:
-        TrackerManager trackerManager = TrackerManager.getInstance ( );
-        ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
-
-        // Start cloud based recognition if we are in scanning mode:
-        if ( mRenderer.getScanningMode ( ) && objectTracker != null )
-        {
-            // TODO -> EXPERIMENTAL
-            objectTracker.start ( );
-
-//            TargetFinder targetFinder = objectTracker.getTargetFinder ( );
-//            targetFinder.startRecognition ( );
-        }
-
-        return result;
-    }
-
-    // TODO -> IGNORE
-    @Override
-    public boolean doStopTrackers ( )
-    {
-        // Indicate if the trackers were stopped correctly
-        boolean result = true;
-
+        // Indicate if the trackers were started correctly and start the tracker
         TrackerManager trackerManager = TrackerManager.getInstance ( );
         ObjectTracker objectTracker = ( ObjectTracker ) trackerManager.getTracker ( ObjectTracker.getClassType ( ) );
 
         if ( objectTracker != null )
         {
-            // TODO -> EXPERIMENTAL
-            objectTracker.stop ( );
+            objectTracker.start ( );
+        }
 
-            // Stop cloud based recognition:
-//            TargetFinder targetFinder = objectTracker.getTargetFinder ( );
-//            targetFinder.stop ( );
-//
-//            // Clears the trackables
-//            targetFinder.clearTrackables ( );
+        return true;
+    }
+
+    @Override
+    public boolean doStopTrackers ( )
+    {
+        // Indicate if the trackers were stopped correctly
+        Tracker objectTracker = TrackerManager.getInstance ( ).getTracker ( ObjectTracker.getClassType ( ) );
+
+        if ( objectTracker != null )
+        {
+            objectTracker.stop ( );
         }
         else
         {
-            result = false;
+            return false;
         }
 
-        return result;
+        return true;
     }
 
-    // TODO -> IGNORE
     @Override
     public boolean doDeinitTrackers ( )
     {
         // Indicate if the trackers were deinitialized correctly
-        boolean result = true;
-
         TrackerManager trackerManager = TrackerManager.getInstance ( );
         trackerManager.deinitTracker ( ObjectTracker.getClassType ( ) );
 
-        return result;
+        return true;
     }
 
-    /**
-     * Crates a Handler to Show/Hide the status bar overlay from an UI Thread
-     */
-    // TODO -> IGNORE
+    // Crates a Handler to Show/Hide the status bar overlay from an UI Thread
     static class StatusBarHandler extends Handler
     {
         private final WeakReference<Schedules> mSchedules;
-
 
         StatusBarHandler ( Schedules schedules )
         {
             mSchedules = new WeakReference<> ( schedules );
         }
 
-
         public void handleMessage ( Message msg )
         {
             Schedules schedules = mSchedules.get ( );
+
             if ( schedules == null )
             {
                 return;
@@ -1348,20 +991,15 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    /**
-     * Creates a handler to Show/Hide the UI Overlay from an UI thread
-     */
-    // TODO -> IGNORE
+    // Creates a handler to Show/Hide the UI Overlay from an UI thread
     static class Overlay2dHandler extends Handler
     {
         private final WeakReference<Schedules> mSchedules;
-
 
         Overlay2dHandler ( Schedules schedules )
         {
             mSchedules = new WeakReference<> ( schedules );
         }
-
 
         public void handleMessage ( Message message )
         {
@@ -1391,143 +1029,6 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
-    /**
-     * Gets the Schedule data from a JSON Object
-     */
-
-    private class GetScheduleDataTask extends AsyncTask<Void, Void, Void>
-    {
-
-        // TODO -> IGNORE
-        protected void onPreExecute ( )
-        {
-            mIsLoadingScheduleData = true;
-
-            // Shows the loading dialog
-            loadingDialogHandler.sendEmptyMessage ( SHOW_LOADING_DIALOG );
-        }
-
-
-        protected Void doInBackground ( Void... params )
-        {
-            try
-            {
-                // Cleans any old reference to mScheduleData
-                if ( mScheduleData != null )
-                {
-                    mScheduleData = null;
-                }
-
-                // Generates a new Schedule Object with the JSON object data
-                mScheduleData = new Schedule ( );
-
-                if ( !shouldUpdateTexture )
-                {
-                    JSONObject jsonObject = new JSONObject ( mScheduleMetadata );
-
-                    Log.d ( LOGTAG, "Metadata : " + mScheduleMetadata );
-                    Log.d ( LOGTAG, "JSON : " + jsonObject.toString ( ) );
-
-                    // TODO -> Query Database Here (Only matches with first result)
-                    String building = jsonObject.getString ( "Building" );
-                    String room = jsonObject.getString ( "Room" );
-
-                    Cursor queryResults = mDb.rawQuery ( "SELECT * FROM Schedule WHERE Building = " + building + " AND Room = " + room, null );
-
-                    activeRows = new Rows ( queryResults ).getRows ( );
-
-                    String[] columnNames = queryResults.getColumnNames ( );
-                    Log.d ( LOGTAG, "Column Names : " + Arrays.toString ( columnNames ) );
-                }
-
-                if ( activeRows.size ( ) > 0 )
-                {
-                    mScheduleData.fillUsingRow ( activeRows.get ( activeRowsIndex ) );
-                }
-            }
-            catch ( Exception e )
-            {
-                Log.d ( LOGTAG, "Couldn't get schedule. e: " + e );
-            }
-
-            return null;
-        }
-
-        // TODO -> IGNORE
-        protected void onProgressUpdate ( Void... values )
-        {
-
-        }
-
-        // TODO -> IGNORE
-        protected void onPostExecute ( Void result )
-        {
-            if ( mScheduleData != null )
-            {
-                // Generates a View to display the schedule data
-                ScheduleOverlayView productView = new ScheduleOverlayView ( Schedules.this );
-
-                // Updates the view used as a 3d Texture
-                updateProductView ( productView, mScheduleData );
-
-                // Sets the layout params
-                productView.setLayoutParams ( new ViewGroup.LayoutParams ( RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT ) );
-
-                // Sets View measure - This size should be the same as the
-                // texture generated to display the overlay in order for the
-                // texture to be centered in screen
-                productView.measure ( View.MeasureSpec.makeMeasureSpec ( mTextureSize, View.MeasureSpec.EXACTLY ), View.MeasureSpec.makeMeasureSpec ( mTextureSize, View.MeasureSpec.EXACTLY ) );
-
-                // updates layout size
-                productView.layout ( 0, 0, productView.getMeasuredWidth ( ), productView.getMeasuredHeight ( ) );
-
-                // Draws the View into a Bitmap. Note we are allocating several
-                // large memory buffers thus attempt to clear them as soon as
-                // they are no longer required:
-                Bitmap bitmap = Bitmap.createBitmap ( mTextureSize, mTextureSize, Bitmap.Config.ARGB_8888 );
-
-                Canvas c = new Canvas ( bitmap );
-                productView.draw ( c );
-
-                // Clear the product view as it is no longer needed
-                productView = null;
-                System.gc ( );
-
-                // Allocate int buffer for pixel conversion and copy pixels
-                int width = bitmap.getWidth ( );
-                int height = bitmap.getHeight ( );
-
-                int[] data = new int[bitmap.getWidth ( ) * bitmap.getHeight ( )];
-                bitmap.getPixels ( data, 0, bitmap.getWidth ( ), 0, 0, bitmap.getWidth ( ), bitmap.getHeight ( ) );
-
-                // Recycle the bitmap object as it is no longer needed
-                bitmap.recycle ( );
-                bitmap = null;
-                c = null;
-                System.gc ( );
-
-                // Generates the Texture from the int buffer
-                mScheduleDataTexture = Texture.loadTextureFromIntBuffer ( data, width, height );
-
-                // Clear the int buffer as it is no longer needed
-                data = null;
-                System.gc ( );
-
-                // Hides the loading dialog from a UI thread
-                loadingDialogHandler.sendEmptyMessage ( HIDE_LOADING_DIALOG );
-
-                mIsLoadingScheduleData = false;
-
-                productTextureIsCreated ( );
-
-                if ( shouldUpdateTexture )
-                {
-                    shouldUpdateTexture = false;
-                }
-            }
-        }
-    }
-
     // Process Double Tap event for showing the Camera options menu
     private class GestureListener extends GestureDetector.SimpleOnGestureListener
     {
@@ -1539,8 +1040,6 @@ public class Schedules extends Activity implements SampleApplicationControl
             return true;
         }
 
-        // TODO -> IGNORE
-        // TODO -> In this method, a WebView is started when a "Schedule" is tapped
         public boolean onSingleTapUp ( MotionEvent event )
         {
 
@@ -1553,8 +1052,7 @@ public class Schedules extends Activity implements SampleApplicationControl
                     Log.e ( "SingleTapUp", "Unable to trigger focus" );
                 }
 
-                // Generates a Handler to trigger continuous auto-focus
-                // after 1 second
+                // Generates a Handler to trigger continuous auto-focus after 1 second
                 autofocusHandler.postDelayed ( new Runnable ( )
                 {
                     public void run ( )
