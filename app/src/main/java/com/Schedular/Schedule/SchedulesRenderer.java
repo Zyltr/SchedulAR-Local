@@ -13,14 +13,10 @@ import com.Schedular.Vuforia.Utilities.SampleUtils;
 import com.Schedular.Vuforia.Utilities.Texture;
 import com.vuforia.Device;
 import com.vuforia.Matrix34F;
-import com.vuforia.ObjectTracker;
 import com.vuforia.Renderer;
 import com.vuforia.State;
-import com.vuforia.TargetFinder;
 import com.vuforia.Tool;
-import com.vuforia.Trackable;
 import com.vuforia.TrackableResult;
-import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,10 +28,6 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
 {
     // Texture is Generated and Target is Acquired - Rendering Book Data
     public static final int RS_NORMAL = 0;
-    // Target has been lost - Rendering transition to 2D Overlay
-    private static final int RS_TRANSITION_TO_2D = 1;
-    // Target has been reacquired - Rendering transition to 3D
-    private static final int RS_TRANSITION_TO_3D = 2;
     // New Target has been found - Loading book data and generating OpenGL
     // Textures
     public static final int RS_LOADING = 3;
@@ -44,10 +36,15 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     public static final int RS_TEXTURE_GENERATED = 4;
     // Books is active and scanning - Searching for targets.
     public static final int RS_SCANNING = 5;
-    // Reference to main activity
-    public Schedules mActivity;
+    // Target has been lost - Rendering transition to 2D Overlay
+    private static final int RS_TRANSITION_TO_2D = 1;
+    // Target has been reacquired - Rendering transition to 3D
+    private static final int RS_TRANSITION_TO_3D = 2;
     private final SampleApplicationSession vuforiaAppSession;
     private final SampleAppRenderer mSampleAppRenderer;
+    private final AtomicInteger framesToSkipBeforeRenderingTransition = new AtomicInteger ( 10 );
+    // Reference to main activity
+    public Schedules mActivity;
     // Initialize RenderState
     private int renderState = RS_SCANNING;
     private Transition3Dto2D transition3Dto2D;
@@ -57,7 +54,6 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     // ----------------------------------------------------------------------------
     // Flag for deleting current product texture in the renderFrame Thread
     // ----------------------------------------------------------------------------
-    private boolean deleteCurrentProductTexture = false;
     private boolean mIsActive = false;
     private boolean mScanningMode = false;
     private boolean mShowAnimation3Dto2D = true;
@@ -68,7 +64,6 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     private Texture mProductTexture;
     private float mDPIScaleIndicator;
     private float mScaleFactor;
-    private final AtomicInteger framesToSkipBeforeRenderingTransition = new AtomicInteger ( 10 );
     private boolean mTrackingStarted = false;
     private int shaderProgramID;
     private int vertexHandle;
@@ -267,18 +262,6 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
         GLES20.glEnable ( GLES20.GL_DEPTH_TEST );
         GLES20.glEnable ( GLES20.GL_CULL_FACE );
 
-        if ( deleteCurrentProductTexture )
-        {
-            // Deletes the product texture if necessary
-            if ( mProductTexture != null )
-            {
-                GLES20.glDeleteTextures ( 1, mProductTexture.mTextureID, 0 );
-                mProductTexture = null;
-            }
-
-            deleteCurrentProductTexture = false;
-        }
-
         // If the render state indicates that the texture is generated it
         // generates
         // the OpenGL texture for start drawing the plane with the book data
@@ -371,7 +354,6 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
         }
 
         GLES20.glDisable ( GLES20.GL_DEPTH_TEST );
-
         Renderer.getInstance ( ).end ( );
     }
 
@@ -585,6 +567,8 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
 
     }
 
+    public Texture getmProductTexture ( ) { return mProductTexture; }
+
     public void startTransition2Dto3D ( )
     {
         mStartAnimation2Dto3D = true;
@@ -603,11 +587,6 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     public void stopTransition3Dto2D ( )
     {
         mStartAnimation3Dto2D = true;
-    }
-
-    public void deleteCurrentProductTexture ( )
-    {
-        deleteCurrentProductTexture = true;
     }
 
     public void setProductTexture ( Texture texture )

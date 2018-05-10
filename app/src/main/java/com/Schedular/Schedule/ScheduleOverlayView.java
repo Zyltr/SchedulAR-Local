@@ -11,58 +11,58 @@ import com.Schedular.R;
 
 public class ScheduleOverlayView extends RelativeLayout
 {
-    public ScheduleOverlayView(Context context)
+    public ScheduleOverlayView ( Context context )
     {
-        this(context, null);
+        this ( context, null );
     }
 
 
-    public ScheduleOverlayView(Context context, AttributeSet attrs)
+    public ScheduleOverlayView ( Context context, AttributeSet attrs )
     {
-        this(context, attrs, 0);
+        this ( context, attrs, 0 );
     }
 
 
-    public ScheduleOverlayView(Context context, AttributeSet attrs, int defStyle)
+    public ScheduleOverlayView ( Context context, AttributeSet attrs, int defStyle )
     {
-        super(context, attrs, defStyle);
-        inflateLayout(context);
+        super ( context, attrs, defStyle );
+        inflateLayout ( context );
     }
 
 
     // Inflates the Custom View Layout
-    private void inflateLayout(Context context)
+    private void inflateLayout ( Context context )
     {
 
-        final LayoutInflater inflater = LayoutInflater.from(context);
+        final LayoutInflater inflater = LayoutInflater.from ( context );
 
         // Generates the layout for the view
         // TODO -> Replace With Our "Schedule Layout"
-        inflater.inflate(R.layout.schedule_bitmap_layout, this, true);
+        inflater.inflate ( R.layout.schedule_bitmap_layout, this, true );
     }
 
     // TODO -> Our Custom View Methods for Uppdating Information
-    public void setTarget ( String target )
+    public void setBuilding ( String building )
     {
-        TextView targetTextView = (TextView) findViewById(R.id.scheduleBuildingTextView );
-        targetTextView.setText(target);
+        TextView buildingTextView = ( TextView ) findViewById ( R.id.scheduleBuildingTextView );
+        buildingTextView.setText ( building );
     }
 
     public void setCourse ( String course )
     {
-        TextView courseTextView = (TextView) findViewById (R.id.scheduleCourseTextView );
-        courseTextView.setText (course);
+        TextView courseTextView = ( TextView ) findViewById ( R.id.scheduleCourseTextView );
+        courseTextView.setText ( course );
     }
 
-    public void setSchedule( String schedule )
+    public void setSchedule ( String schedule )
     {
-        TextView scheduleTextView = (TextView) findViewById (R.id.scheduleScheduleTextView );
-        scheduleTextView.setText (schedule);
+        TextView scheduleTextView = ( TextView ) findViewById ( R.id.scheduleScheduleTextView );
+        scheduleTextView.setText ( schedule );
     }
 
-    public void setProfessor ( String professor )
+    public void setInstructor ( String instructor )
     {
-        TextView professorTextView = (TextView) findViewById (R.id.scheduleInstructorTextView );
-        professorTextView.setText (professor);
+        TextView instructorTextView = ( TextView ) findViewById ( R.id.scheduleInstructorTextView );
+        instructorTextView.setText ( instructor );
     }
 }

@@ -139,7 +139,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/detailedCourseNameTextView" />
 
             <View
-                android:id="@+id/departmentDivider"
+                android:id="@+id/detailedCourseDivider"
                 android:layout_width="0dp"
                 android:layout_height="5dp"
                 android:layout_marginBottom="24dp"
@@ -165,7 +165,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/departmentDivider" />
+                app:layout_constraintTop_toBottomOf="@+id/detailedCourseDivider" />
 
             <TextView
                 android:id="@+id/detailedInstructorLabel"
@@ -276,11 +276,11 @@
                 android:text="Email"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                app:layout_constraintBaseline_toBaselineOf="@+id/emailTextView"
+                app:layout_constraintBaseline_toBaselineOf="@+id/detailedEmailTextView"
                 app:layout_constraintEnd_toEndOf="@+id/detailedOfficeBuildingLabel" />
 
             <TextView
-                android:id="@+id/emailTextView"
+                android:id="@+id/detailedEmailTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -295,7 +295,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/detailedOfficeHoursTextView" />
 
             <View
-                android:id="@+id/instructorDivider"
+                android:id="@+id/detailedInstructorDivider"
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:layout_marginEnd="24dp"
@@ -307,7 +307,80 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailTextView" />
+                app:layout_constraintTop_toBottomOf="@+id/detailedEmailTextView" />
+
+            <ImageView
+                android:id="@+id/detailedInstructorImageView"
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginRight="64dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_report_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailedInstructorDivider" />
+
+            <View
+                android:id="@+id/detailedImageDivider"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailedInstructorImageView" />
+
+            <TextView
+                android:id="@+id/detailedRatingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="Rating"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailedImageDivider" />
+
+            <RatingBar
+                android:id="@+id/detailedRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:isIndicator="false"
+                android:stepSize="0.1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailedRatingLabel" />
+
+            <View
+                android:id="@+id/detailedRatingDivider"
+                android:layout_width="0dp"
+                android:layout_height="5dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailedRatingBar" />
 
             <Button
                 android:id="@+id/detailedDoneButton"
@@ -319,14 +392,27 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
+                android:onClick="doneButtonOnClick"
                 android:text="Done!"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/instructorDivider"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintTop_toBottomOf="@+id/detailedRatingDivider" />
+
+            <Switch
+                android:id="@+id/detailedRatingSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:editable="false"
+                android:onClick="showRatingOnClick"
+                android:switchTextAppearance="@style/TextAppearance.AppCompat"
+                android:textSize="24sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/detailedRatingLabel"
+                app:layout_constraintEnd_toEndOf="@+id/detailedImageDivider"
+                tools:checked="false" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

@@ -2,10 +2,19 @@ package com.Schedular.Schedule;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.Schedular.R;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class DetailedScheduleActivity extends Activity
 {
@@ -32,7 +41,6 @@ public class DetailedScheduleActivity extends Activity
             return;
 
         // Update Views
-
         String courseNumber = ":D: :CN: - " + sectionNumber;
         String courseName = "";
         String courseDescription = "";
@@ -81,6 +89,28 @@ public class DetailedScheduleActivity extends Activity
                 case "INSTRUCTORNAME":
                 {
                     instructor = instructorValues[index];
+
+                    try
+                    {
+                        // Get list of Faculty Images, try to find the one that matches, and use
+                        // that Image for the Image View
+                        for ( String instructorName : getAssets ().list ( "Faculty" ) )
+                        {
+                            if ( instructorName.contains ( instructor ) )
+                            {
+                                InputStream inputstream = getAssets().open("Faculty/" + instructorName );
+                                Drawable instructorDrawable = Drawable.createFromStream ( inputstream, null );
+                                ImageView instructorImageView = ( ImageView ) findViewById ( R.id.detailedInstructorImageView );
+                                instructorImageView.setImageDrawable ( instructorDrawable );
+                                break;
+                            }
+                        }
+                    }
+                    catch ( IOException exception )
+                    {
+                        exception.printStackTrace ();
+                    }
+
                     break;
                 }
                 case "OFFICEBUILDING":
@@ -101,5 +131,31 @@ public class DetailedScheduleActivity extends Activity
         ( ( TextView ) findViewById ( R.id.detailedInstructorTextView ) ).setText ( instructor );
         ( ( TextView ) findViewById ( R.id.detailedOfficeBuildingTextView ) ).setText ( officeBuilding );
         ( ( TextView ) findViewById ( R.id.detailedOfficeRoomTextView ) ).setText ( officeRoom );
+    }
+
+    public void showRatingOnClick ( View view )
+    {
+        if ( view.equals ( findViewById ( R.id.detailedRatingSwitch ) ) )
+        {
+            Switch ratingSwitch = ( Switch ) view;
+            RatingBar ratingBar = ( RatingBar ) findViewById ( R.id.detailedRatingBar );
+
+            if ( ratingSwitch.isChecked () )
+            {
+                ratingBar.setRating ( ( float ) Math.random () * 10.0f / 2.0f );
+            }
+            else
+            {
+                ratingBar.setRating ( 0.0f );
+            }
+        }
+    }
+
+    public void doneButtonOnClick ( View view )
+    {
+        if ( view.equals ( findViewById ( R.id.detailedDoneButton ) ) )
+        {
+            this.finish ();
+        }
     }
 }

@@ -46,12 +46,11 @@ import com.vuforia.Tracker;
 import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 public class Schedules extends Activity implements SampleApplicationControl
 {
@@ -253,7 +252,6 @@ public class Schedules extends Activity implements SampleApplicationControl
 
         if ( mRenderer != null )
         {
-            mRenderer.deleteCurrentProductTexture ( );
             initStateVariables ( );
         }
 
@@ -280,7 +278,7 @@ public class Schedules extends Activity implements SampleApplicationControl
             Log.e ( LOGTAG, exception.getString ( ) );
         }
 
-        System.gc();
+        System.gc ( );
     }
 
     private void startLoadingAnimation ( )
@@ -395,7 +393,7 @@ public class Schedules extends Activity implements SampleApplicationControl
                     ++activeRowsIndex;
                 }
 
-                Toast.makeText ( mActivity, "Next", Toast.LENGTH_SHORT ).show ( );
+                Toast.makeText ( mActivity, "Updated", Toast.LENGTH_SHORT ).show ( );
                 shouldUpdateTexture = true;
                 updateProductTexture ( );
             }
@@ -416,7 +414,7 @@ public class Schedules extends Activity implements SampleApplicationControl
                     activeRowsIndex = activeRows.size ( ) - 1;
                 }
 
-                Toast.makeText ( mActivity, "Previous", Toast.LENGTH_SHORT ).show ( );
+                Toast.makeText ( mActivity, "Updated", Toast.LENGTH_SHORT ).show ( );
                 shouldUpdateTexture = true;
                 updateProductTexture ( );
             }
@@ -484,10 +482,10 @@ public class Schedules extends Activity implements SampleApplicationControl
     // Updates a ScheduleOverlayView with the Schedule data specified in parameters
     private void updateProductView ( ScheduleOverlayView productView, Schedule schedule )
     {
-        productView.setTarget ( schedule.getTarget ( ) );
+        productView.setBuilding ( schedule.getTarget ( ) );
         productView.setCourse ( schedule.getCourse ( ) );
         productView.setSchedule ( schedule.getSchedule ( ) );
-        productView.setProfessor ( schedule.getInstructor ( ) );
+        productView.setInstructor ( schedule.getInstructor ( ) );
     }
 
     public void enterContentMode ( )
@@ -786,9 +784,11 @@ public class Schedules extends Activity implements SampleApplicationControl
 
             if ( !shouldUpdateTexture )
             {
-                String[] buildingAndRoom = trackable.getName ().split ( "-" );
+                String[] buildingAndRoom = trackable.getName ( ).split ( "-" );
                 if ( buildingAndRoom.length != 2 )
+                {
                     return;
+                }
 
                 String building = buildingAndRoom[0];
                 String room = buildingAndRoom[1];
@@ -803,6 +803,24 @@ public class Schedules extends Activity implements SampleApplicationControl
 
             if ( activeRows.size ( ) > 0 )
             {
+                // First time creating Texture so pick the one closest to System time
+                if ( mRenderer.getmProductTexture ( ) == null )
+                {
+                    int currentHour = Calendar.getInstance ( ).get ( Calendar.HOUR );
+                    int approximateScheduleIndex = 0, hourDifferential = Integer.MAX_VALUE;
+                    for ( Row row : activeRows )
+                    {
+                        int rowHour = Integer.parseInt ( row.data.get ( "StartTime" ).split ( ":" )[0] );
+                        int difference = Math.abs ( currentHour - rowHour );
+                        if ( difference < hourDifferential )
+                        {
+                            hourDifferential = difference;
+                            approximateScheduleIndex = activeRows.indexOf ( row );
+                        }
+                    }
+                    activeRowsIndex = approximateScheduleIndex;
+                }
+
                 mScheduleData.fillUsingRow ( activeRows.get ( activeRowsIndex ) );
 
                 // Generates a View to display the schedule data
@@ -829,7 +847,7 @@ public class Schedules extends Activity implements SampleApplicationControl
 
                 Canvas c = new Canvas ( bitmap );
                 productView.draw ( c );
-                System.gc ();
+                System.gc ( );
 
                 // Allocate int buffer for pixel conversion and copy pixels
                 int width = bitmap.getWidth ( );
@@ -837,8 +855,8 @@ public class Schedules extends Activity implements SampleApplicationControl
 
                 int[] data = new int[bitmap.getWidth ( ) * bitmap.getHeight ( )];
                 bitmap.getPixels ( data, 0, bitmap.getWidth ( ), 0, 0, bitmap.getWidth ( ), bitmap.getHeight ( ) );
-                bitmap.recycle ();
-                System.gc ();
+                bitmap.recycle ( );
+                System.gc ( );
 
                 // Generates the Texture from the int buffer
                 mRenderer.setProductTexture ( Texture.loadTextureFromIntBuffer ( data, width, height ) );
@@ -872,16 +890,15 @@ public class Schedules extends Activity implements SampleApplicationControl
             String status = stringForStatus ( result.getStatus ( ) );
             String statusInfo = stringForStatusInfo ( result.getStatusInfo ( ) );
 
-            Log.d ( LOGTAG, "Trackable NAME : " + trackable.getName () );
+            Log.d ( LOGTAG, "Trackable NAME : " + trackable.getName ( ) );
             Log.d ( LOGTAG, "Status : " + status + " | Status Info : " + statusInfo );
 
-            if ( !currentTrackableId.equals ( trackable.getName () ) )
+            if ( !currentTrackableId.equals ( trackable.getName ( ) ) )
             {
                 currentTrackable = trackable;
                 currentTrackableId = trackable.getName ( );
                 Log.d ( LOGTAG, "Initialize Tracker's Texture Here" );
 
-                mRenderer.deleteCurrentProductTexture ( );
                 mRenderer.setRenderState ( SchedulesRenderer.RS_LOADING );
                 createProductTexture ( currentTrackable );
             }
