@@ -15,19 +15,19 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 
-public class SampleAppMenuView extends LinearLayout
+public class ApplicationMenuView extends LinearLayout
 {
     
     int horizontalClipping = 0;
     
     
-    public SampleAppMenuView(Context context)
+    public ApplicationMenuView ( Context context)
     {
         super(context);
     }
     
     
-    public SampleAppMenuView(Context context, AttributeSet attribute)
+    public ApplicationMenuView ( Context context, AttributeSet attribute)
     {
         super(context, attribute);
     }

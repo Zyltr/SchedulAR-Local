@@ -12,8 +12,8 @@ package com.Schedular.Vuforia.Application;
 import com.vuforia.State;
 
 
-//  Interface to be implemented by the activity which uses SampleApplicationSession
-public interface SampleApplicationControl
+//  Interface to be implemented by the activity which uses ApplicationSession
+public interface ApplicationControl
 {
     
     // To be called to initialize the trackers
@@ -44,7 +44,7 @@ public interface SampleApplicationControl
     // This callback is called after the Vuforia initialization is complete,
     // the trackers are initialized, their data loaded and
     // tracking is ready to start
-    void onInitARDone(SampleApplicationException e);
+    void onInitARDone(ApplicationException e);
     
     
     // This callback is called every cycle

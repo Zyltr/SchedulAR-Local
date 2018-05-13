@@ -6,10 +6,10 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import com.Schedular.Vuforia.Application.SampleAppRenderer;
-import com.Schedular.Vuforia.Application.SampleAppRendererControl;
-import com.Schedular.Vuforia.Application.SampleApplicationSession;
-import com.Schedular.Vuforia.Utilities.SampleUtils;
+import com.Schedular.Vuforia.Application.ApplicationRenderer;
+import com.Schedular.Vuforia.Application.ApplicationSession;
+import com.Schedular.Vuforia.Application.ApplicationRendererControl;
+import com.Schedular.Vuforia.Utilities.VuforiaUtilities;
 import com.Schedular.Vuforia.Utilities.Texture;
 import com.vuforia.Device;
 import com.vuforia.Matrix34F;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRendererControl
+public class SchedulesRenderer implements GLSurfaceView.Renderer, ApplicationRendererControl
 {
     // Texture is Generated and Target is Acquired - Rendering Book Data
     public static final int RS_NORMAL = 0;
@@ -40,8 +40,8 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     private static final int RS_TRANSITION_TO_2D = 1;
     // Target has been reacquired - Rendering transition to 3D
     private static final int RS_TRANSITION_TO_3D = 2;
-    private final SampleApplicationSession vuforiaAppSession;
-    private final SampleAppRenderer mSampleAppRenderer;
+    private final ApplicationSession vuforiaAppSession;
+    private final ApplicationRenderer mApplicationRenderer;
     private final AtomicInteger framesToSkipBeforeRenderingTransition = new AtomicInteger ( 10 );
     // Reference to main activity
     public Schedules mActivity;
@@ -73,14 +73,14 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     private Matrix34F pose;
     private Plane mPlane;
 
-    public SchedulesRenderer ( Schedules activity, SampleApplicationSession appSession )
+    SchedulesRenderer ( Schedules activity, ApplicationSession appSession )
     {
         vuforiaAppSession = appSession;
         mActivity = activity;
 
-        // SampleAppRenderer used to encapsulate the use of RenderingPrimitives setting
+        // ApplicationRenderer used to encapsulate the use of RenderingPrimitives setting
         // the device mode AR/VR and stereo mode
-        mSampleAppRenderer = new SampleAppRenderer ( this, mActivity, Device.MODE.MODE_AR, false, 0.010f, 5f );
+        mApplicationRenderer = new ApplicationRenderer ( this, mActivity, Device.MODE.MODE_AR, false, 0.010f, 5f );
     }
 
     public void setFramesToSkipBeforeRenderingTransition ( int framesToSkip )
@@ -155,7 +155,7 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
         GLES20.glClearColor ( 0.0f, 0.0f, 0.0f, Vuforia.requiresAlpha ( ) ? 0.0f : 1.0f );
 
         // OpenGL setup for 3D model
-        shaderProgramID = SampleUtils.createProgramFromShaderSrc ( Shaders.cubeMeshVertexShader, Shaders.cubeFragmentShader );
+        shaderProgramID = VuforiaUtilities.createProgramFromShaderSrc ( Shaders.cubeMeshVertexShader, Shaders.cubeFragmentShader );
 
         vertexHandle = GLES20.glGetAttribLocation ( shaderProgramID, "vertexPosition" );
         textureCoordHandle = GLES20.glGetAttribLocation ( shaderProgramID, "vertexTexCoord" );
@@ -193,14 +193,14 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
     public void updateVideoBackground ( )
     {
         Vuforia.onSurfaceChanged ( mScreenWidth, mScreenHeight );
-        mSampleAppRenderer.onConfigurationChanged ( mIsActive );
+        mApplicationRenderer.onConfigurationChanged ( mIsActive );
     }
 
 
     // Function to update the rendering primitives
     public void updateRenderingPrimitives ( )
     {
-        mSampleAppRenderer.updateRenderingPrimitives ( );
+        mApplicationRenderer.updateRenderingPrimitives ( );
     }
 
 
@@ -211,7 +211,7 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
         // or after OpenGL ES context was lost (e.g. after onPause/onResume):
         Vuforia.onSurfaceCreated ( );
 
-        mSampleAppRenderer.onSurfaceCreated ( );
+        mApplicationRenderer.onSurfaceCreated ( );
 
         // Call function to initialize rendering:
         initRendering ( );
@@ -232,7 +232,7 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
         Vuforia.onSurfaceChanged ( width, height );
 
         // RenderingPrimitives to be updated when some rendering change is done
-        mSampleAppRenderer.onConfigurationChanged ( mIsActive );
+        mApplicationRenderer.onConfigurationChanged ( mIsActive );
 
         // Call function to initialize rendering:
         initRendering ( );
@@ -245,19 +245,19 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
 
         if ( mIsActive )
         {
-            mSampleAppRenderer.configureVideoBackground ( );
+            mApplicationRenderer.configureVideoBackground ( );
         }
     }
 
 
     // The render function called from SampleAppRendering by using RenderingPrimitives views.
-    // The state is owned by SampleAppRenderer which is controlling it's lifecycle.
+    // The state is owned by ApplicationRenderer which is controlling it's lifecycle.
     // State should not be cached outside this method.
     public void renderFrame ( State state, float[] projectionMatrix )
     {
 
         // Renders video background replacing Renderer.DrawVideoBackground()
-        mSampleAppRenderer.renderVideoBackground ( );
+        mApplicationRenderer.renderVideoBackground ( );
 
         GLES20.glEnable ( GLES20.GL_DEPTH_TEST );
         GLES20.glEnable ( GLES20.GL_CULL_FACE );
@@ -509,13 +509,20 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
 
         }
 
-        SampleUtils.checkGLError ( "Schedules renderFrame" );
+        VuforiaUtilities.checkGLError ( "Schedules renderFrame" );
 
     }
 
 
     private void generateProductTextureInOpenGL ( )
     {
+        Texture textureObject = mActivity.getTexture ();
+
+        if (textureObject != null)
+        {
+            mProductTexture = textureObject;
+        }
+
         // Generates the Texture in OpenGL
         GLES20.glGenTextures ( 1, mProductTexture.mTextureID, 0 );
         GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, mProductTexture.mTextureID[0] );
@@ -540,8 +547,8 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, SampleAppRende
             return;
         }
 
-        // Call our function to render content from SampleAppRenderer class
-        mSampleAppRenderer.render ( );
+        // Call our function to render content from ApplicationRenderer class
+        mApplicationRenderer.render ( );
     }
 
     public void showAnimation3Dto2D ( boolean b )

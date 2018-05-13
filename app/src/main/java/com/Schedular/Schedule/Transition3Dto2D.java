@@ -12,7 +12,7 @@ package com.Schedular.Schedule;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.Schedular.Vuforia.Utilities.SampleUtils;
+import com.Schedular.Vuforia.Utilities.VuforiaUtilities;
 import com.vuforia.Matrix34F;
 import com.vuforia.Matrix44F;
 import com.vuforia.Tool;
@@ -77,7 +77,7 @@ public class Transition3Dto2D
         textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramID, "vertexTexCoord");
         mvpMatrixHandle = GLES20.glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
         
-        SampleUtils.checkGLError("Transition3Dto2D.initializeGL");
+        VuforiaUtilities.checkGLError("Transition3Dto2D.initializeGL");
     }
     
     
@@ -181,7 +181,7 @@ public class Transition3Dto2D
         GLES20.glDisableVertexAttribArray(textureCoordHandle);
         GLES20.glDisable(GLES20.GL_BLEND);
         
-        SampleUtils.checkGLError("Transition3Dto2D.render");
+        VuforiaUtilities.checkGLError("Transition3Dto2D.render");
         
     }
     

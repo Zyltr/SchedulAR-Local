@@ -13,19 +13,19 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 
 
-public class SampleAppMenuAnimator extends ValueAnimator implements
+public class ApplicationMenuAnimator extends ValueAnimator implements
     ValueAnimator.AnimatorUpdateListener, ValueAnimator.AnimatorListener
 {
     
     private static long MENU_ANIMATION_DURATION = 300;
-    private SampleAppMenu mSampleAppMenu;
+    private ApplicationMenu mApplicationMenu;
     private float mMaxX;
     private float mEndX;
     
     
-    public SampleAppMenuAnimator(SampleAppMenu menu)
+    public ApplicationMenuAnimator ( ApplicationMenu menu)
     {
-        mSampleAppMenu = menu;
+        mApplicationMenu = menu;
         setDuration(MENU_ANIMATION_DURATION);
         addUpdateListener(this);
         addListener(this);
@@ -36,7 +36,7 @@ public class SampleAppMenuAnimator extends ValueAnimator implements
     public void onAnimationUpdate(ValueAnimator animation)
     {
         Float f = (Float) animation.getAnimatedValue();
-        mSampleAppMenu.setAnimationX(f.floatValue());
+        mApplicationMenu.setAnimationX(f.floatValue());
     }
     
     
@@ -49,9 +49,9 @@ public class SampleAppMenuAnimator extends ValueAnimator implements
     @Override
     public void onAnimationEnd(Animator animation)
     {
-        mSampleAppMenu.setDockMenu(mEndX == mMaxX);
+        mApplicationMenu.setDockMenu(mEndX == mMaxX);
         if (mEndX == 0)
-            mSampleAppMenu.hide();
+            mApplicationMenu.hide();
     }
     
     

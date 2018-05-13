@@ -19,10 +19,10 @@ import com.vuforia.Vec4F;
 import com.vuforia.VideoBackgroundConfig;
 
 
-public class SampleMath
+public class VuforiaMath
 {
     
-    private static final String LOGTAG = "SampleMath";
+    private static final String LOGTAG = "VuforiaMath";
     
     private static float temp[] = new float[16];
     private static Vec3F mLineStart = new Vec3F();

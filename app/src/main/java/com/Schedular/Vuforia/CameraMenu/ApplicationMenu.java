@@ -32,19 +32,19 @@ import java.util.ArrayList;
 
 
 // Handles the sample apps menu settings
-public class SampleAppMenu
+public class ApplicationMenu
 {
     
     protected static final String SwipeSettingsInterface = null;
     private GestureListener mGestureListener;
     private GestureDetector mGestureDetector;
-    private SampleAppMenuAnimator mMenuAnimator;
+    private ApplicationMenuAnimator mMenuAnimator;
     private Activity mActivity;
-    private SampleAppMenuInterface mMenuInterface;
+    private ApplicationMenuInterface mMenuInterface;
     private GLSurfaceView mMovableView;
-    private SampleAppMenuView mParentMenuView;
+    private ApplicationMenuView mParentMenuView;
     private LinearLayout mMovableListView;
-    private ArrayList<SampleAppMenuGroup> mSettingsItems = new ArrayList<SampleAppMenuGroup>();
+    private ArrayList<ApplicationMenuGroup> mSettingsItems = new ArrayList<ApplicationMenuGroup>();
     
     private ArrayList<View> mAdditionalViews;
     private float mInitialAdditionalViewsX[];
@@ -73,9 +73,9 @@ public class SampleAppMenu
     // movableView - SurfaceView where the OpenGL rendering is done
     // listView - Parent view where the settings layout will be attached
     // additionalViewToHide - Additional view to move with openGl view
-    public SampleAppMenu(SampleAppMenuInterface menuInterface,
-        Activity activity, String menuTitle, GLSurfaceView movableView,
-        RelativeLayout parentView, ArrayList<View> additionalViewsToHide)
+    public ApplicationMenu ( ApplicationMenuInterface menuInterface,
+                             Activity activity, String menuTitle, GLSurfaceView movableView,
+                             RelativeLayout parentView, ArrayList<View> additionalViewsToHide)
     {
         mMenuInterface = menuInterface;
         mActivity = activity;
@@ -83,7 +83,7 @@ public class SampleAppMenu
         mAdditionalViews = additionalViewsToHide;
         
         LayoutInflater inflater = LayoutInflater.from(mActivity);
-        mParentMenuView = (SampleAppMenuView) inflater.inflate(
+        mParentMenuView = ( ApplicationMenuView ) inflater.inflate(
             R.layout.sample_app_menu_layer, null, false);
         parentView.addView(mParentMenuView);
         
@@ -106,7 +106,7 @@ public class SampleAppMenu
         mGestureDetector = new GestureDetector(mActivity, mGestureListener);
         
         if (!mIsBelowICS)
-            mMenuAnimator = new SampleAppMenuAnimator(this);
+            mMenuAnimator = new ApplicationMenuAnimator (this);
         
         DisplayMetrics metrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -135,7 +135,7 @@ public class SampleAppMenu
                 
                 LinearLayout.LayoutParams groupParams = new LinearLayout.LayoutParams(
                     mListViewWidth, LinearLayout.LayoutParams.WRAP_CONTENT);
-                for (SampleAppMenuGroup group : mSettingsItems)
+                for (ApplicationMenuGroup group : mSettingsItems)
                 {
                     group.getMenuLayout().setLayoutParams(groupParams);
                 }
@@ -290,9 +290,9 @@ public class SampleAppMenu
     }
     
     
-    public SampleAppMenuGroup addGroup(String string, boolean hasTitle)
+    public ApplicationMenuGroup addGroup( String string, boolean hasTitle)
     {
-        SampleAppMenuGroup newGroup = new SampleAppMenuGroup(mMenuInterface,
+        ApplicationMenuGroup newGroup = new ApplicationMenuGroup (mMenuInterface,
             mActivity, this, hasTitle, string, 700);
         mSettingsItems.add(newGroup);
         return mSettingsItems.get(mSettingsItems.size() - 1);
@@ -302,7 +302,7 @@ public class SampleAppMenu
     public void attachMenu()
     {
         
-        for (SampleAppMenuGroup group : mSettingsItems)
+        for (ApplicationMenuGroup group : mSettingsItems)
         {
             mMovableListView.addView(group.getMenuLayout());
         }

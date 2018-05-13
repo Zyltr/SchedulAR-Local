@@ -10,8 +10,8 @@ countries.
 package com.Schedular.Vuforia.CameraMenu;
 
 // To be implemented in the activities to handle any desired function 
-// previously set for a SampleAppMenu instance
-public interface SampleAppMenuInterface
+// previously set for a ApplicationMenu instance
+public interface ApplicationMenuInterface
 {
     public boolean menuProcess(int command);
 }

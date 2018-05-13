@@ -11,7 +11,8 @@ package com.Schedular.Vuforia.Application;
 
 import com.vuforia.State;
 
-public interface SampleAppRendererControl {
+public interface ApplicationRendererControl
+{
 
     // This method has to be implemented by the Renderer class which handles the content rendering
     // of the sample, this one is called from SampleAppRendering class for each view inside a loop

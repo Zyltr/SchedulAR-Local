@@ -20,7 +20,7 @@ import java.nio.ByteOrder;
 import android.content.res.AssetManager;
 
 
-public class SampleApplication3DModel extends MeshObject
+public class Application3DModel extends MeshObject
 {
     
     private ByteBuffer verts;

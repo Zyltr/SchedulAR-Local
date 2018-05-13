@@ -30,11 +30,11 @@ import android.widget.TextView;
 
 import com.Schedular.R;
 
-public class SampleAppMenuGroup
+public class ApplicationMenuGroup
 {
 
     Activity mActivity;
-    SampleAppMenuInterface mMenuInterface;
+    ApplicationMenuInterface mMenuInterface;
     LinearLayout mLayout;
     LayoutParams mLayoutParams;
     LayoutInflater inflater;
@@ -48,7 +48,7 @@ public class SampleAppMenuGroup
     
     int selectorResource;
     
-    SampleAppMenu mSampleAppMenu;
+    ApplicationMenu mApplicationMenu;
     RadioGroup mRadioGroup;
     
     OnClickListener mClickListener;
@@ -57,13 +57,13 @@ public class SampleAppMenuGroup
     
     
     @SuppressLint("InflateParams")
-    public SampleAppMenuGroup(SampleAppMenuInterface menuInterface,
-        Activity context, SampleAppMenu parent, boolean hasTitle, String title,
-        int width)
+    public ApplicationMenuGroup ( ApplicationMenuInterface menuInterface,
+                                  Activity context, ApplicationMenu parent, boolean hasTitle, String title,
+                                  int width)
     {
         mActivity = context;
         mMenuInterface = menuInterface;
-        mSampleAppMenu = parent;
+        mApplicationMenu = parent;
         mLayoutParams = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -112,7 +112,7 @@ public class SampleAppMenuGroup
             {
                 int command = Integer.parseInt(v.getTag().toString());
                 mMenuInterface.menuProcess(command);
-                mSampleAppMenu.hideMenu();
+                mApplicationMenu.hideMenu();
             }
             
         };
@@ -131,7 +131,7 @@ public class SampleAppMenuGroup
                 {
                     switchView.setChecked(!isChecked);
                 } else
-                    mSampleAppMenu.hideMenu();
+                    mApplicationMenu.hideMenu();
                 
             }
             
@@ -151,7 +151,7 @@ public class SampleAppMenuGroup
                     result = mMenuInterface.menuProcess(command);
                     if (result)
                     {
-                        mSampleAppMenu.hideMenu();
+                        mApplicationMenu.hideMenu();
                     }
                 }
             }

@@ -29,11 +29,11 @@ import android.widget.Toast;
 
 import com.Schedular.Database.DatabaseHelper;
 import com.Schedular.R;
-import com.Schedular.Vuforia.Application.SampleApplicationControl;
-import com.Schedular.Vuforia.Application.SampleApplicationException;
-import com.Schedular.Vuforia.Application.SampleApplicationSession;
+import com.Schedular.Vuforia.Application.ApplicationControl;
+import com.Schedular.Vuforia.Application.ApplicationException;
+import com.Schedular.Vuforia.Application.ApplicationSession;
 import com.Schedular.Vuforia.Utilities.LoadingDialogHandler;
-import com.Schedular.Vuforia.Utilities.SampleApplicationGLView;
+import com.Schedular.Vuforia.Utilities.ApplicationGLView;
 import com.Schedular.Vuforia.Utilities.Texture;
 import com.vuforia.CameraDevice;
 import com.vuforia.DataSet;
@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class Schedules extends Activity implements SampleApplicationControl
+public class Schedules extends Activity implements ApplicationControl
 {
     // Activity Keys
     public static final String SectionNumberKey = "com.Schedular.Scheule.SectionNumberKey";
@@ -73,14 +73,15 @@ public class Schedules extends Activity implements SampleApplicationControl
     private static final int SCHEDULEINFO_IS_DISPLAYED = 1;
 
     private static int mTextureSize = 768;
-    SampleApplicationSession vuforiaAppSession;
+    ApplicationSession vuforiaAppSession;
     String currentTrackableId;
     Trackable currentTrackable;
     private int mScheduleInfoStatus = SCHEDULEINFO_NOT_DISPLAYED;
     private String mStatusBarText;
     private Schedule mScheduleData;
-    private SampleApplicationGLView mGlView;
+    private ApplicationGLView mGlView;
     private SchedulesRenderer mRenderer;
+    private Texture mTexture;
     private ConstraintLayout mUILayout;
     private TextView mStatusBar;
     private ImageButton mCloseButton;
@@ -167,7 +168,7 @@ public class Schedules extends Activity implements SampleApplicationControl
 
         mActivity = this;
 
-        vuforiaAppSession = new SampleApplicationSession ( this );
+        vuforiaAppSession = new ApplicationSession ( this );
 
         startLoadingAnimation ( );
 
@@ -181,7 +182,7 @@ public class Schedules extends Activity implements SampleApplicationControl
         // Use an OrientationChangeListener here to capture all orientation changes.  Android
         // will not send an Activity.onConfigurationChanged() callback on a 180 degree rotation,
         // ie: Left Landscape to Right Landscape.  Vuforia needs to react to this change and the
-        // SampleApplicationSession needs to update the Projection Matrix.
+        // ApplicationSession needs to update the Projection Matrix.
         OrientationEventListener orientationEventListener = new OrientationEventListener ( mActivity )
         {
             int mLastRotation = -1;
@@ -245,7 +246,7 @@ public class Schedules extends Activity implements SampleApplicationControl
         {
             vuforiaAppSession.pauseAR ( );
         }
-        catch ( SampleApplicationException exception )
+        catch ( ApplicationException exception )
         {
             Log.e ( LOGTAG, exception.getString ( ) );
         }
@@ -273,7 +274,7 @@ public class Schedules extends Activity implements SampleApplicationControl
         {
             vuforiaAppSession.stopAR ( );
         }
-        catch ( SampleApplicationException exception )
+        catch ( ApplicationException exception )
         {
             Log.e ( LOGTAG, exception.getString ( ) );
         }
@@ -435,7 +436,7 @@ public class Schedules extends Activity implements SampleApplicationControl
         boolean translucent = Vuforia.requiresAlpha ( );
 
         // Initialize the GLView with proper flags
-        mGlView = new SampleApplicationGLView ( this );
+        mGlView = new ApplicationGLView ( this );
         mGlView.init ( translucent, depthSize, stencilSize );
 
         // Setup the Renderer of the GLView
@@ -608,7 +609,7 @@ public class Schedules extends Activity implements SampleApplicationControl
     }
 
     @Override
-    public void onInitARDone ( SampleApplicationException exception )
+    public void onInitARDone ( ApplicationException exception )
     {
 
         if ( exception == null )
@@ -774,6 +775,14 @@ public class Schedules extends Activity implements SampleApplicationControl
         }
     }
 
+    public Texture getTexture ()
+    {
+        if ( mTexture == null )
+            createProductTexture ( null );
+
+        return mTexture;
+    }
+
     private void createProductTexture ( Trackable trackable )
     {
         loadingDialogHandler.sendEmptyMessage ( SHOW_LOADING_DIALOG );
@@ -859,7 +868,8 @@ public class Schedules extends Activity implements SampleApplicationControl
                 System.gc ( );
 
                 // Generates the Texture from the int buffer
-                mRenderer.setProductTexture ( Texture.loadTextureFromIntBuffer ( data, width, height ) );
+                mTexture = Texture.loadTextureFromIntBuffer ( data, width, height );
+                mRenderer.setProductTexture ( mTexture );
 
                 // Hides the loading dialog from a UI thread
                 loadingDialogHandler.sendEmptyMessage ( HIDE_LOADING_DIALOG );
