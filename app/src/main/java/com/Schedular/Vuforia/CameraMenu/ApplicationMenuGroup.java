@@ -70,7 +70,7 @@ public class ApplicationMenuGroup
         
         inflater = LayoutInflater.from(mActivity);
         mLayout = (LinearLayout) inflater.inflate(
-            R.layout.sample_app_menu_group, null, false);
+            R.layout.application_menu_group, null, false);
         mLayout.setLayoutParams(new LinearLayout.LayoutParams(width,
             LinearLayout.LayoutParams.WRAP_CONTENT));
         
@@ -83,7 +83,7 @@ public class ApplicationMenuGroup
             R.dimen.menu_entries_top_down_padding);
         mEntriesUpDownRadioPadding = (int) mActivity.getResources()
             .getDimension(R.dimen.menu_entries_top_down_radio_padding);
-        dividerResource = R.layout.sample_app_menu_group_divider;
+        dividerResource = R.layout.application_menu_group_divider;
         
         selectorResource = android.R.drawable.list_selector_background;
         
@@ -267,7 +267,7 @@ public class ApplicationMenuGroup
             selectorResource);
         
         RadioButton newRadioButton = (RadioButton) inflater.inflate(
-            R.layout.sample_app_menu_group_radio_button, null, false);
+            R.layout.application_menu_group_radio_button, null, false);
         newRadioButton.setText(text);
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
