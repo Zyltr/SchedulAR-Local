@@ -57,7 +57,7 @@
     <string name="INIT_OBJECT_DATASET_NOT_FOUND">Please scan an object and load a database</string>
 
     <string name="content_desc_camera_button">Camera Button</string>
-    <string name="overlay_build_target_help">Hold the device parallel to the target</string>
+    <string name="overlay_build_target_help">Hold the device parallel to the location</string>
     <string name="target_quality_error_title">Low Quality Image</string>
     <string name="target_quality_error_desc">The image has very little detail, please try another.</string>
 

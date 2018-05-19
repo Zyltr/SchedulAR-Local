@@ -41,20 +41,20 @@
         app:layout_constraintTop_toTopOf="@+id/schedulePaperView" />
 
     <TextView
-        android:id="@+id/scheduleBuildingLabel"
+        android:id="@+id/scheduleLocationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Building"
+        android:text="Location"
         android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@+id/schedulePaperView"
         app:layout_constraintTop_toTopOf="@+id/schedulePaperView" />
 
     <TextView
-        android:id="@+id/scheduleBuildingTextView"
+        android:id="@+id/scheduleLocationTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -62,12 +62,12 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Building Goes Here"
+        android:text="Location Goes Here"
         android:textStyle="italic"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/schedulePaperView"
         app:layout_constraintStart_toStartOf="@+id/schedulePaperView"
-        app:layout_constraintTop_toBottomOf="@+id/scheduleBuildingLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/scheduleLocationLabel" />
 
     <TextView
         android:id="@+id/scheduleCourseLabel"
@@ -80,7 +80,7 @@
         android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@+id/schedulePaperView"
-        app:layout_constraintTop_toBottomOf="@+id/scheduleBuildingTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/scheduleLocationTextView" />
 
     <TextView
         android:id="@+id/scheduleCourseTextView"

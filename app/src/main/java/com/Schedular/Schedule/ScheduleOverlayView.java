@@ -42,10 +42,10 @@ public class ScheduleOverlayView extends RelativeLayout
     }
 
     // TODO -> Our Custom View Methods for Uppdating Information
-    public void setBuilding ( String building )
+    public void setLocation ( String location )
     {
-        TextView buildingTextView = ( TextView ) findViewById ( R.id.scheduleBuildingTextView );
-        buildingTextView.setText ( building );
+        TextView locationTextView = ( TextView ) findViewById ( R.id.scheduleLocationTextView );
+        locationTextView.setText ( location );
     }
 
     public void setCourse ( String course )

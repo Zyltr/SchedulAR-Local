@@ -42,8 +42,10 @@
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -82,7 +84,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Course Number Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -108,7 +113,11 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Course Name Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/detailedCourseNameLabel"
                 app:layout_constraintTop_toBottomOf="@+id/detailedCourseNumberTextView" />
@@ -123,36 +132,20 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/detailedCourseDescriptionTextView"
                 app:layout_constraintEnd_toEndOf="@+id/detailedInstructorLabel" />
 
-            <TextView
-                android:id="@+id/detailedCourseDescriptionTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Course Description Goes Here"
-                android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/detailedDescriptionLabel"
-                app:layout_constraintTop_toBottomOf="@+id/detailedCourseNameTextView" />
-
             <View
                 android:id="@+id/detailedCourseDivider"
                 android:layout_width="0dp"
                 android:layout_height="5dp"
-                android:layout_marginBottom="24dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintBottom_toTopOf="@+id/detailedInstructorTitleLabel"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailedDescriptionLabel" />
+                app:layout_constraintTop_toBottomOf="@+id/detailedCourseDescriptionTextView" />
 
             <TextView
                 android:id="@+id/detailedInstructorTitleLabel"
@@ -208,7 +201,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Instructor Goes Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/detailedInstructorLabel"
@@ -223,7 +219,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Office Building Goes Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/detailedOfficeBuildingLabel"
@@ -238,7 +237,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Office Room Goes Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/detailedOfficeRoomLabel"
@@ -263,7 +265,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Office Hours Go Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/detailedOfficeHoursLabel"
@@ -288,7 +293,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:clickable="true"
                 android:text="Email Goes Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/detailedEmailLabel"
@@ -308,6 +316,21 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/detailedEmailTextView" />
+
+            <ImageView
+                android:id="@+id/detailedInstructorBackgroundImageView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginRight="64dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="12dp"
+                android:alpha="0.25"
+                android:src="@android:color/holo_orange_light"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailedInstructorDivider" />
 
             <ImageView
                 android:id="@+id/detailedInstructorImageView"
@@ -413,6 +436,26 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/detailedRatingLabel"
                 app:layout_constraintEnd_toEndOf="@+id/detailedImageDivider"
                 tools:checked="false" />
+
+            <TextView
+                android:id="@+id/detailedCourseDescriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:scrollbars="vertical"
+                android:singleLine="false"
+                android:text="Course Description Goes Here"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/detailedDescriptionLabel"
+                app:layout_constraintTop_toBottomOf="@+id/detailedCourseNameTextView" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

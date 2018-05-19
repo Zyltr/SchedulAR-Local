@@ -66,6 +66,7 @@ public class DetailedScheduleActivity extends Activity
                 }
                 case "COURSEDESCRIPTION":
                 {
+                    courseDescription = courseValues[index];
                     break;
                 }
                 default:
@@ -123,6 +124,11 @@ public class DetailedScheduleActivity extends Activity
                     officeRoom = instructorValues[index];
                     break;
                 }
+                case "EMAIL":
+                {
+                    email = instructorValues[index];
+                    break;
+                }
                 default:
                     break;
             }
@@ -131,6 +137,8 @@ public class DetailedScheduleActivity extends Activity
         ( ( TextView ) findViewById ( R.id.detailedInstructorTextView ) ).setText ( instructor );
         ( ( TextView ) findViewById ( R.id.detailedOfficeBuildingTextView ) ).setText ( officeBuilding );
         ( ( TextView ) findViewById ( R.id.detailedOfficeRoomTextView ) ).setText ( officeRoom );
+        ( ( TextView ) findViewById ( R.id.detailedOfficeHoursTextView ) ).setText ( "TBD" );
+        ( ( TextView ) findViewById ( R.id.detailedEmailTextView ) ).setText ( email );
     }
 
     public void showRatingOnClick ( View view )

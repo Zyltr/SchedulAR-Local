@@ -1,33 +1,22 @@
 package com.Schedular.Schedule;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Schedule
 {
-    private String target;
+    private static SimpleDateFormat militaryTimeSimpleDateFormatter = new SimpleDateFormat("H:mm");
+    private static SimpleDateFormat standardTimeSimpleDateFormatter = new SimpleDateFormat("h:mm a");
+
+    private String location;
     private String course;
     private String schedule;
     private String instructor;
 
     public Schedule ( ) { }
 
-
-    public void setTarget ( String target ) { this.target = target; }
-
-    public void setCourse ( String course )
-    {
-        this.course = course;
-    }
-
-    public void setSchedule ( String schedule )
-    {
-        this.schedule = schedule;
-    }
-
-    public void setInstructor ( String instructor )
-    {
-        this.instructor = instructor;
-    }
-
-    public String getTarget ( ) { return target; }
+    public String getLocation ( ) { return location; }
 
     public String getCourse ( )
     {
@@ -46,7 +35,7 @@ public class Schedule
 
     public void fillUsingRow ( Row row )
     {
-        target = ":B: :R:";
+        location = ":B: :R:";
         course = ":D: :CN: - :SN:";
         schedule = ":D: from :ST: to :ET:";
         instructor = ":I:";
@@ -79,22 +68,40 @@ public class Schedule
                 }
                 case "STARTTIME":
                 {
-                    schedule = schedule.replaceFirst ( ":ST:", value );
+                    try
+                    {
+                        Date date = militaryTimeSimpleDateFormatter.parse ( value );
+                        schedule = schedule.replaceFirst ( ":ST:", standardTimeSimpleDateFormatter.format ( date ) );
+                    }
+                    catch ( ParseException parseException )
+                    {
+                        parseException.printStackTrace ();
+                    }
+
                     break;
                 }
                 case "ENDTIME":
                 {
-                    schedule = schedule.replaceFirst ( ":ET:", value );
+                    try
+                    {
+                        Date date = militaryTimeSimpleDateFormatter.parse ( value );
+                        schedule = schedule.replaceFirst ( ":ET:", standardTimeSimpleDateFormatter.format ( date )  );
+                    }
+                    catch ( ParseException parseException )
+                    {
+                        parseException.printStackTrace ();
+                    }
+
                     break;
                 }
                 case "BUILDING":
                 {
-                    target = target.replaceFirst ( ":B:", value );
+                    location = location.replaceFirst ( ":B:", value );
                     break;
                 }
                 case "ROOM":
                 {
-                    target = target.replaceFirst ( ":R:", value );
+                    location = location.replaceFirst ( ":R:", value );
                     break;
                 }
                 case "INSTRUCTOR":

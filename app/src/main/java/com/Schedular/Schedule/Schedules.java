@@ -483,7 +483,7 @@ public class Schedules extends Activity implements ApplicationControl
     // Updates a ScheduleOverlayView with the Schedule data specified in parameters
     private void updateProductView ( ScheduleOverlayView productView, Schedule schedule )
     {
-        productView.setBuilding ( schedule.getTarget ( ) );
+        productView.setLocation ( schedule.getLocation ( ) );
         productView.setCourse ( schedule.getCourse ( ) );
         productView.setSchedule ( schedule.getSchedule ( ) );
         productView.setInstructor ( schedule.getInstructor ( ) );
@@ -778,7 +778,7 @@ public class Schedules extends Activity implements ApplicationControl
     public Texture getTexture ()
     {
         if ( mTexture == null )
-            createProductTexture ( null );
+            createProductTexture ( currentTrackable );
 
         return mTexture;
     }
@@ -802,7 +802,7 @@ public class Schedules extends Activity implements ApplicationControl
                 String building = buildingAndRoom[0];
                 String room = buildingAndRoom[1];
 
-                Cursor queryResults = mDb.rawQuery ( "SELECT * FROM Schedule WHERE Building = " + building + " AND Room = " + room, null );
+                Cursor queryResults = mDb.rawQuery ( "SELECT * FROM Schedule WHERE Building = ? AND Room = ?", new String[] { building, room } );
 
                 activeRows = new Rows ( queryResults ).getRows ( );
 
@@ -827,6 +827,7 @@ public class Schedules extends Activity implements ApplicationControl
                             approximateScheduleIndex = activeRows.indexOf ( row );
                         }
                     }
+
                     activeRowsIndex = approximateScheduleIndex;
                 }
 

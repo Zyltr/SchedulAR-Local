@@ -85,7 +85,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/about.synopsis.description"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -123,7 +123,7 @@
                 android:id="@+id/aboutFirstImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/lion"
+                android:src="@drawable/articuno"
                 app:layout_constraintStart_toStartOf="@+id/aboutFirstDivider"
                 app:layout_constraintTop_toBottomOf="@+id/aboutFirstDivider" />
 
@@ -136,7 +136,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Jason Chan Zhang"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="normal|bold|italic"
                 app:layout_constraintBottom_toBottomOf="@+id/aboutFirstImageView"
                 app:layout_constraintEnd_toEndOf="@+id/aboutFirstDivider"
@@ -161,7 +161,7 @@
                 android:id="@+id/aboutSecondImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/tiger"
+                android:src="@drawable/moltres"
                 app:layout_constraintStart_toStartOf="@+id/aboutFirstDivider"
                 app:layout_constraintTop_toBottomOf="@+id/aboutSecondDivider" />
 
@@ -173,8 +173,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Joshua Iwikari"
-                android:textSize="18sp"
+                android:text="Joshua Iwakari"
+                android:textSize="16sp"
                 android:textStyle="normal|bold|italic"
                 app:layout_constraintBottom_toBottomOf="@+id/aboutSecondImageView"
                 app:layout_constraintEnd_toEndOf="@+id/aboutSecondDivider"
@@ -199,7 +199,7 @@
                 android:id="@+id/aboutThirdImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/jaguar"
+                android:src="@drawable/zapdos"
                 app:layout_constraintStart_toStartOf="@+id/aboutFirstDivider"
                 app:layout_constraintTop_toBottomOf="@+id/aboutThirdDivider" />
 
@@ -212,7 +212,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Jamie Lopez"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="normal|bold|italic"
                 app:layout_constraintBottom_toBottomOf="@+id/aboutThirdImageView"
                 app:layout_constraintEnd_toEndOf="@+id/aboutThirdDivider"
@@ -237,7 +237,7 @@
                 android:id="@+id/aboutFourthmageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/snowleopard"
+                android:src="@drawable/aerodactyl"
                 app:layout_constraintStart_toStartOf="@+id/aboutFirstDivider"
                 app:layout_constraintTop_toBottomOf="@+id/aboutFourthDivider" />
 
@@ -250,7 +250,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Erik Huerta"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="normal|bold|italic"
                 app:layout_constraintBottom_toBottomOf="@+id/aboutFourthmageView"
                 app:layout_constraintEnd_toEndOf="parent"
