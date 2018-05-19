@@ -32,8 +32,8 @@ import com.Schedular.R;
 import com.Schedular.Vuforia.Application.ApplicationControl;
 import com.Schedular.Vuforia.Application.ApplicationException;
 import com.Schedular.Vuforia.Application.ApplicationSession;
-import com.Schedular.Vuforia.Utilities.LoadingDialogHandler;
 import com.Schedular.Vuforia.Utilities.ApplicationGLView;
+import com.Schedular.Vuforia.Utilities.LoadingDialogHandler;
 import com.Schedular.Vuforia.Utilities.Texture;
 import com.vuforia.CameraDevice;
 import com.vuforia.DataSet;
@@ -102,6 +102,8 @@ public class Schedules extends Activity implements ApplicationControl
     private ArrayList<String> mDatasetStrings = new ArrayList<> ( );
     private int activeRowsIndex = 0;
     private boolean shouldUpdateTexture = false;
+    private boolean mCameraFlash = false;
+
 
     private void initStateVariables ( )
     {
@@ -327,6 +329,11 @@ public class Schedules extends Activity implements ApplicationControl
             @Override
             public void onClick ( View view )
             {
+                if ( mCameraFlash )
+                {
+                    mCameraFlash = false;
+                }
+
                 Intent informationIntent = new Intent ( mActivity, DetailedScheduleActivity.class );
 
                 // Create Information Object that will be passed to the Intent
@@ -631,7 +638,6 @@ public class Schedules extends Activity implements ApplicationControl
             loadingDialogHandler.sendEmptyMessage ( HIDE_LOADING_DIALOG );
 
             mUILayout.setBackgroundColor ( Color.TRANSPARENT );
-
         }
         else
         {
@@ -775,10 +781,12 @@ public class Schedules extends Activity implements ApplicationControl
         }
     }
 
-    public Texture getTexture ()
+    public Texture getTexture ( )
     {
         if ( mTexture == null )
+        {
             createProductTexture ( currentTrackable );
+        }
 
         return mTexture;
     }
@@ -1096,6 +1104,16 @@ public class Schedules extends Activity implements ApplicationControl
             }
 
             return true;
+        }
+
+        @Override
+        public void onLongPress ( MotionEvent motionEvent )
+        {
+            super.onLongPress ( motionEvent );
+
+            mCameraFlash = !mCameraFlash;
+            CameraDevice.getInstance ().setFlashTorchMode ( mCameraFlash );
+            Toast.makeText ( mActivity, ( mCameraFlash ? "Flash On" : "Flash Off" ), Toast.LENGTH_SHORT ).show ( );
         }
     }
 

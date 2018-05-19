@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -95,16 +96,38 @@ public class DetailedScheduleActivity extends Activity
                     {
                         // Get list of Faculty Images, try to find the one that matches, and use
                         // that Image for the Image View
+                        String[] instructorNameComponents = instructor.split ( "\\p{Space}+" );
+
                         for ( String instructorName : getAssets ().list ( "Faculty" ) )
                         {
-                            if ( instructorName.contains ( instructor ) )
+                            boolean startsWith = false, endsWith = false;
+
+                            String name = instructorName.replaceFirst ( ".jpg", "" );
+
+                            for ( String component : instructorNameComponents )
                             {
+                                if ( name.startsWith ( component ) )
+                                {
+                                    startsWith = true;
+                                }
+                                else if ( name.endsWith ( component ) )
+                                {
+                                    endsWith = true;
+                                }
+                            }
+
+                            if ( startsWith && endsWith )
+                            {
+                                Log.d ( "Detailed", "Matched " + instructor + " with " + instructorName );
+
                                 InputStream inputstream = getAssets().open("Faculty/" + instructorName );
                                 Drawable instructorDrawable = Drawable.createFromStream ( inputstream, null );
                                 ImageView instructorImageView = ( ImageView ) findViewById ( R.id.detailedInstructorImageView );
                                 instructorImageView.setImageDrawable ( instructorDrawable );
                                 break;
                             }
+
+                            Log.d ( "Detailed", "Failed to match " + instructor + " with " + instructorName );
                         }
                     }
                     catch ( IOException exception )
