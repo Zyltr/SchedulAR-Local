@@ -135,7 +135,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Jason Chan Zhang"
+                android:text="Jason Chang Zhang"
                 android:textSize="16sp"
                 android:textStyle="normal|bold|italic"
                 app:layout_constraintBottom_toBottomOf="@+id/aboutFirstImageView"

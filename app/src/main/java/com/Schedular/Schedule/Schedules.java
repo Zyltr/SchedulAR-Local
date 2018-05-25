@@ -1112,7 +1112,7 @@ public class Schedules extends Activity implements ApplicationControl
             super.onLongPress ( motionEvent );
 
             mCameraFlash = !mCameraFlash;
-            CameraDevice.getInstance ().setFlashTorchMode ( mCameraFlash );
+            CameraDevice.getInstance ( ).setFlashTorchMode ( mCameraFlash );
             Toast.makeText ( mActivity, ( mCameraFlash ? "Flash On" : "Flash Off" ), Toast.LENGTH_SHORT ).show ( );
         }
     }
