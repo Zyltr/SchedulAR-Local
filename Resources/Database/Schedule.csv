@@ -1,0 +1,22 @@
+Department,Course Number,Section Number,Days,Start Time,End Time,Building,Room,Instructor
+CS,128,1,MWF,9:15 AM,10:20 AM,3,2636,Thanh Nguyen
+CS,128,2,TuTh,8:00 AM,9:50 AM,8,345,Thomas Huang
+CS,130,1,MWF,10:30 AM,11:35 AM,8,348,Tingting Chen
+CS,130,2,TuTh,10:00 AM,11:50 AM,8,52,Mohammad Husain
+CS,140,1,MW,2:00 PM,3:50 PM,8,52,Fuh Sang
+CS,140,2,TuTh,3:00 PM,4:50 PM,8,52,Dominick Atanasio
+CS,141,1,TuTh,5:00 PM,6:50 PM,8,348,Jonathan Johannsen
+CS,141,2,MW,4:00 PM,5:50 PM,8,345,Ukwatta Jayarathna
+CS,210,1,TuTh,5:00 PM,6:50 PM,3,2636,Nima Davarpanah
+CS,210,2,MW,2:00 PM,3:50 PM,3,2636,Asha Khakpour
+CS,240,1,TuTh,1:00 PM,2:50 PM,8,345,Ben Steichen
+CS,241,1,MW,2:00 PM,3:50 PM,8,345,Tannaz Rezaei Damavandi
+CS,241,2,TuTh,3:00 PM,4:50 PM,8,302,Jonathan Johannsen
+CS,256,1,TuTh,7:00 PM,8:50 PM,3,2636,Nima Davarpanah
+CS,256,2,MW,4:00 PM,5:50 PM,8,52,Thanh Nguyen
+CS,264,1,MWF,11:45 AM,12:50 PM,8,345,Tony Diaz
+CS,264,2,TuTh,7:00 PM,8:50 PM,8,302,Dominick Atanasio
+CS,299,1,MW,2:00 PM,3:50 PM,8,302,Ukwatta Jayarathna
+CS,299S,1,TuTh,10:00 AM,11:50 AM,8,348,Yu Sun
+CS,301,1,TuTh,10:00 AM,11:50 AM,8,302,Amar Raheja
+CS,301,2,MWF,9:15 AM,10:20 AM,8,348,Asha Khakpour
