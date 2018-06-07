@@ -59,6 +59,7 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, ApplicationRen
     private boolean mShowAnimation3Dto2D = true;
     private boolean mStartAnimation3Dto2D = false;
     private boolean mStartAnimation2Dto3D = false;
+    boolean deleteCurrentProductTexture = false;
     private int mScreenHeight;
     private int mScreenWidth;
     private Texture mProductTexture;
@@ -261,6 +262,18 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, ApplicationRen
 
         GLES20.glEnable ( GLES20.GL_DEPTH_TEST );
         GLES20.glEnable ( GLES20.GL_CULL_FACE );
+
+        if ( deleteCurrentProductTexture )
+        {
+            // Deletes the product texture if necessary
+            if ( mProductTexture != null )
+            {
+                GLES20.glDeleteTextures ( 1, mProductTexture.mTextureID, 0 );
+                mProductTexture = null;
+            }
+
+            deleteCurrentProductTexture = false;
+        }
 
         // If the render state indicates that the texture is generated it
         // generates
@@ -616,12 +629,10 @@ public class SchedulesRenderer implements GLSurfaceView.Renderer, ApplicationRen
         mDPIScaleIndicator = dpiSIndicator;
     }
 
-
     public void setScaleFactor ( float f )
     {
         mScaleFactor = f;
     }
-
 
     public void resetTrackingStarted ( )
     {

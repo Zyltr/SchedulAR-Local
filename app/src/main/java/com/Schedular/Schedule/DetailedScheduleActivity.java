@@ -96,27 +96,15 @@ public class DetailedScheduleActivity extends Activity
                     {
                         // Get list of Faculty Images, try to find the one that matches, and use
                         // that Image for the Image View
-                        String[] instructorNameComponents = instructor.split ( "\\p{Space}+" );
+                        // String[] instructorNameComponents = instructor.split ( "\\p{Space}+" );
 
                         for ( String instructorName : getAssets ().list ( "Faculty" ) )
                         {
-                            boolean startsWith = false, endsWith = false;
+                            // boolean startsWith = false, endsWith = false;
 
                             String name = instructorName.replaceFirst ( ".jpg", "" );
 
-                            for ( String component : instructorNameComponents )
-                            {
-                                if ( name.startsWith ( component ) )
-                                {
-                                    startsWith = true;
-                                }
-                                else if ( name.endsWith ( component ) )
-                                {
-                                    endsWith = true;
-                                }
-                            }
-
-                            if ( startsWith && endsWith )
+                            if ( instructor.equals ( name ) )
                             {
                                 Log.d ( "Detailed", "Matched " + instructor + " with " + instructorName );
 
